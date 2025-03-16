@@ -9,8 +9,16 @@ import kotlin.experimental.or
  * @author rodrigotimoteo
 **/
 data class Word(
-    val content: Byte = 0
+    var content: Byte = 0
 ) : BitOperations {
+
+    fun setValue(value: Int) {
+        content = value.toByte()
+    }
+
+    fun getValue(): Int {
+        return content.toInt()
+    }
 
     private fun checkInvalidBit(bit: Int) {
         if (bit < 0 || bit > 7) throw IllegalArgumentException("Invalid bit")
