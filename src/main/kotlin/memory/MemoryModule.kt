@@ -5,7 +5,7 @@ package com.github.memory
  * absorves the main logic those modules
  * @author rodrigotimoteo
  **/
-class MemoryModule(
+open class MemoryModule(
     private val numberOfBanks: Int = 1,
     private val memoryOffset: Int,
     private val simultaneousActiveBanks: Int,

@@ -1,6 +1,8 @@
 package com.github.memory
 
 /**
+ * Holds references to the reserved addresses that exist in the Game Boy architecutre, these addresses
+ * are points of memory boundaries or special registers
  * @author rodrigotimoteo
  **/
 enum class ReservedAddresses(
