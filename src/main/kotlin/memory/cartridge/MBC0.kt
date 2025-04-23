@@ -10,7 +10,7 @@ import memory.MemoryModule
 class MBC0(
     romBanks: Int,
     ramBanks: Int,
-    romContent: Array<Byte>
+    romContent: ByteArray
 ) : MemoryModule(
     content = romContent,
     size = 0x4000,

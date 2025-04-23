@@ -44,14 +44,14 @@ class RomReader {
     /**
      * Holds the content of the rom
      */
-    private var romContent: Array<Byte> = emptyArray()
+    private var romContent: ByteArray = byteArrayOf()
 
     /**
      * Loads a Rom into rom content
      */
     fun loadRom(romFile: File) {
         try {
-            romContent = Files.readAllBytes(romFile.toPath()).toTypedArray()
+            romContent = Files.readAllBytes(romFile.toPath()).toTypedArray().toByteArray()
         } catch (exception: IOException) {
             val newException = IOException("Failed to load file")
             newException.stackTrace = exception.stackTrace

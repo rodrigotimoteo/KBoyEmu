@@ -30,7 +30,7 @@ open class MemoryModule(
         size = size
     )
 
-    constructor(content: Array<Byte>, size: Int, simultaneousBanks: Int, memoryOffset: Int, numberOfBanks: Int) : this(
+    constructor(content: ByteArray, size: Int, simultaneousBanks: Int, memoryOffset: Int, numberOfBanks: Int) : this(
         numberOfBanks = numberOfBanks,
         activeBank = if (simultaneousBanks == 2) 1 else 0,
         simultaneousBanks = simultaneousBanks,
@@ -40,7 +40,7 @@ open class MemoryModule(
         initializeMemory(content)
     }
 
-    private fun initializeMemory(content: Array<Byte>) {
+    private fun initializeMemory(content: ByteArray) {
         for ((i, byte) in content.withIndex()) {
             memory[i / size][i % size].content = byte
         }
