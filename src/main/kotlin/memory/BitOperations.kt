@@ -1,4 +1,4 @@
-package com.github.memory
+package memory
 
 /**
  * This interface represents the avaliable methods that a user class must implement when they need

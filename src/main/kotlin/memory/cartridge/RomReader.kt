@@ -1,7 +1,7 @@
-package com.github.memory.cartridge
+package memory.cartridge
 
-import com.github.memory.MemoryModule
-import com.github.memory.ReservedAddresses
+import memory.MemoryModule
+import memory.ReservedAddresses
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -11,6 +11,7 @@ import kotlin.experimental.and
  * Class responsible for reading a file and parsing its rom, creating a MBC for the given rom
  * @author rodrigotimoteo
  **/
+@Suppress("MagicNumber")
 class RomReader {
 
     /**
@@ -52,7 +53,10 @@ class RomReader {
         try {
             romContent = Files.readAllBytes(romFile.toPath()).toTypedArray()
         } catch (exception: IOException) {
-            println("Error reading ROM")
+            val newException = IOException("Failed to load file")
+            newException.stackTrace = exception.stackTrace
+
+            throw newException
         }
     }
 

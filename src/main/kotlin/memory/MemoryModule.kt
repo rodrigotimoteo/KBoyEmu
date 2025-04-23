@@ -1,4 +1,4 @@
-package com.github.memory
+package memory
 
 /**
  * Represents a memory module, the game boy is divided into several modules, therefore this class
@@ -8,7 +8,7 @@ package com.github.memory
 open class MemoryModule(
     private val numberOfBanks: Int = 1,
     private val memoryOffset: Int,
-    private val simultaneousActiveBanks: Int,
+    private val simultaneousBanks: Int,
     private val activeBank: Int = 0,
     private val size: Int,
 ) : MemoryOperations {
@@ -17,23 +17,23 @@ open class MemoryModule(
     constructor(size: Int, memoryOffset: Int) : this(
         numberOfBanks = 1,
         activeBank = 0,
-        simultaneousActiveBanks = 1,
+        simultaneousBanks = 1,
         memoryOffset = memoryOffset,
         size = size
     )
 
-    constructor(size: Int, simultaneousActiveBanks: Int, memoryOffset: Int, numberOfBanks: Int) : this(
+    constructor(size: Int, simultaneousBanks: Int, memoryOffset: Int, numberOfBanks: Int) : this(
         numberOfBanks = numberOfBanks,
-        activeBank = if (simultaneousActiveBanks == 2) 1 else 0,
-        simultaneousActiveBanks = simultaneousActiveBanks,
+        activeBank = if (simultaneousBanks == 2) 1 else 0,
+        simultaneousBanks = simultaneousBanks,
         memoryOffset = memoryOffset,
         size = size
     )
 
-    constructor(content: Array<Byte>, size: Int, simultaneousActiveBanks: Int, memoryOffset: Int, numberOfBanks: Int) : this(
+    constructor(content: Array<Byte>, size: Int, simultaneousBanks: Int, memoryOffset: Int, numberOfBanks: Int) : this(
         numberOfBanks = numberOfBanks,
-        activeBank = if (simultaneousActiveBanks == 2) 1 else 0,
-        simultaneousActiveBanks = simultaneousActiveBanks,
+        activeBank = if (simultaneousBanks == 2) 1 else 0,
+        simultaneousBanks = simultaneousBanks,
         memoryOffset = memoryOffset,
         size = size
     ) {
@@ -52,7 +52,7 @@ open class MemoryModule(
         if (numberOfBanks == 1) {
             memory[activeBank][realIndex].setValue(value)
         } else {
-            if (simultaneousActiveBanks == 1) {
+            if (simultaneousBanks == 1) {
                 memory[activeBank][realIndex].setValue(value)
             } else {
                 val moduleSize = memory[activeBank].size
@@ -72,7 +72,7 @@ open class MemoryModule(
         return if(numberOfBanks == 1) {
             memory[activeBank][realIndex].getValue()
         } else {
-            if(simultaneousActiveBanks == 1)
+            if(simultaneousBanks == 1)
                 memory[activeBank][realIndex].getValue()
             else {
                 val moduleSize = memory[activeBank].size
@@ -92,7 +92,7 @@ open class MemoryModule(
         return if(numberOfBanks == 1) {
             memory[activeBank][realIndex]
         } else {
-            if(simultaneousActiveBanks == 1)
+            if(simultaneousBanks == 1)
                 memory[activeBank][realIndex]
             else {
                 val moduleSize = memory[activeBank].size
@@ -111,6 +111,7 @@ open class MemoryModule(
      * be read, therefore enabling the prints of this class as a readable output, that enabled easier
      * debugging
      */
+    @Suppress("MagicNumber")
     override fun toString(): String {
         val stringBuilder = StringBuilder()
 

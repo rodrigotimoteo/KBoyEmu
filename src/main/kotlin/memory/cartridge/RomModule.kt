@@ -1,4 +1,4 @@
-package com.github.memory.cartridge
+package memory.cartridge
 
 /**
  * Defines specific behavior hold by memory modules responsible for holding the contents of roms,

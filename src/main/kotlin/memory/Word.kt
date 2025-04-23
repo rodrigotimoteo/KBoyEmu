@@ -1,4 +1,4 @@
-package com.github.memory
+package memory
 
 import kotlin.experimental.and
 import kotlin.experimental.or
@@ -20,8 +20,10 @@ data class Word(
         return content.toInt()
     }
 
+    // The 7 here refers to the bit edge (bit = 8 bytes)
+    @Suppress("MagicNumber")
     private fun checkInvalidBit(bit: Int) {
-        if (bit < 0 || bit > 7) throw IllegalArgumentException("Invalid bit")
+        require(bit < 0 || bit > 7)
     }
 
     override fun setBit(bit: Int) {
