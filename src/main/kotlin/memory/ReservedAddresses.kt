@@ -1,10 +1,11 @@
-package com.github.memory
+package memory
 
 /**
  * Holds references to the reserved addresses that exist in the Game Boy architecutre, these addresses
  * are points of memory boundaries or special registers
  * @author rodrigotimoteo
  **/
+@Suppress("MagicNumber")
 enum class ReservedAddresses(
     val memoryAddress: Int
 ) {

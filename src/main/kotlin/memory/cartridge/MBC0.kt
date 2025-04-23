@@ -1,6 +1,6 @@
-package com.github.memory.cartridge
+package memory.cartridge
 
-import com.github.memory.MemoryModule
+import memory.MemoryModule
 
 /**
  * Represents the MBC0 (Memory Bank Controller) one of many types of controllers used by the Game Boy
@@ -14,7 +14,7 @@ class MBC0(
 ) : MemoryModule(
     content = romContent,
     size = 0x4000,
-    simultaneousActiveBanks = 2,
+    simultaneousBanks = 2,
     memoryOffset = 0x0,
     numberOfBanks = romBanks
 ), RomModule {
