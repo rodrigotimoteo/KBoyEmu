@@ -71,8 +71,18 @@ class RomReader {
      * Build and return a new MemoryModule for the given rom
      */
     fun getRomModule(): MemoryModule = when(romContent[ReservedAddresses.CARTRIDGE_TYPE.memoryAddress].toInt()) {
-        0x00, 0x08, 0x09 -> MBC0(getRomSize(), getRamSize(), romContent)
-        else -> MBC0(getRomSize(), getRamSize(), romContent)
+        0x00, 0x08, 0x09 ->
+            MBC0(getRomSize(), getRamSize(), romContent)
+        0x01, 0x02, 0x03 ->
+            MBC1(getRomSize(), getRamSize(), romContent)
+        0x05, 0x06 ->
+            MBC2(getRomSize(), getRamSize(), romContent)
+        0x0F, 0x10, 0x11, 0x12, 0x13 ->
+            MBC3(getRomSize(), getRamSize(), romContent)
+        0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E ->
+            MBC5(getRomSize(), getRamSize(), romContent)
+        else ->
+            MBC0(getRomSize(), getRamSize(), romContent)
     }
 
     /**
