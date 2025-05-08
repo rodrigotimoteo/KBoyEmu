@@ -107,8 +107,8 @@ class MemoryManager(
      * This method is responsible for handling the assignment of new values to the bottom registers, according to all
      * their quirks (these registers have special conditions that must be respected)
      *
-     * @param memoryAddress - memory location where value should be written
-     * @param value - content that needs to be written to given address
+     * @param memoryAddress memory location where value should be written
+     * @param value content that needs to be written to given address
      */
     private fun handleBottomRegisters(memoryAddress: Int, value: Int) {
         if (memoryAddress == ReservedAddresses.DIV.memoryAddress)

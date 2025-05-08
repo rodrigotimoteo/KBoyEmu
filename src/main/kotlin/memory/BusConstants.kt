@@ -3,6 +3,7 @@ package memory
 /**
  * @author rodrigotimoteo
  **/
+@Suppress("MagicNumber")
 enum class BusConstants(
     val id: Int
 ) {
