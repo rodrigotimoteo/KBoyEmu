@@ -3,6 +3,7 @@ package memory
 /**
  * Represents a memory module, the game boy is divided into several modules, therefore this class
  * absorves the main logic those modules
+ *
  * @author rodrigotimoteo
  **/
 open class MemoryModule(
@@ -40,6 +41,11 @@ open class MemoryModule(
         initializeMemory(content)
     }
 
+    /**
+     * Method that initializes all the Word objects to the provided value as ByteArray (used for rom assignment)
+     *
+     * @param content to assign to memory module
+     */
     private fun initializeMemory(content: ByteArray) {
         for ((i, byte) in content.withIndex()) {
             memory[i / size][i % size].content = byte
@@ -110,6 +116,8 @@ open class MemoryModule(
      * Override the toString method to better reflect the way the information for this class should
      * be read, therefore enabling the prints of this class as a readable output, that enabled easier
      * debugging
+     *
+     * @return custom dump of this module
      */
     @Suppress("MagicNumber")
     override fun toString(): String {

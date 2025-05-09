@@ -3,6 +3,7 @@ package memory.cartridge
 /**
  * Defines specific behavior hold by memory modules responsible for holding the contents of roms,
  * these are mostly ram bank controllors at least for now
+ *
  * @author rodrigotimoteo
  **/
 interface RomModule {

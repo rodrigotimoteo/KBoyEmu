@@ -1,4 +1,6 @@
 /**
+ * Holds the project's constants
+ *
  * @author rodrigotimoteo
  **/
 object KBConstants {

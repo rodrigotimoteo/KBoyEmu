@@ -9,6 +9,7 @@ import kotlin.experimental.and
 
 /**
  * Class responsible for reading a file and parsing its rom, creating a MBC for the given rom
+ *
  * @author rodrigotimoteo
  **/
 @Suppress("MagicNumber")

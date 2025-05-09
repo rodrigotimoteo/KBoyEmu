@@ -1,6 +1,8 @@
 package memory
 
 /**
+ * This class is the main vehicle for inter component comunication. It is where PPU/Memory/CPU interact
+ *
  * @author rodrigotimoteo
  **/
 class Bus(
