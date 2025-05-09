@@ -10,7 +10,27 @@ class Bus(
     private val memoryManager: MemoryManager = MemoryManager(this, rom)
 
     fun isCGB(): Boolean {
-        return false
+        return isCGB
+    }
+
+    /**
+     * Changes value of specific word based on its memory address
+     *
+     * @param memoryAddress where to change the value
+     * @param value to assign
+     */
+    public fun setValue(memoryAddress: Int, value: Int) {
+        memoryManager.setValue(memoryAddress, value);
+    }
+
+    /**
+     * Gets the value of specific word based on its address
+     *
+     * @param memoryAddress where to change the value
+     * @return value stored in specific address
+     */
+    public fun getValue(memoryAddress: Int): Int {
+        return memoryManager.getValue(memoryAddress);
     }
 
 }
