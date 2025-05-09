@@ -18,4 +18,9 @@ object KBConstants {
 
     const val FILTER_BYTE = 0xF
     const val FILTER_2BYTE_WORD = 0xFF
+
+    const val CARRY_BIT = 4
+    const val HALF_CARRY_BIT = 5
+    const val SUBTRACT_BIT = 6
+    const val ZERO_BIT = 7
 }

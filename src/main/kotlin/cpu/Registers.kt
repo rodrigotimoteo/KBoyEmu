@@ -30,7 +30,7 @@ class Registers(
     /**
      * Stores the CPU flags hold by register F
      */
-    private val flags: Flags = Flags(bus)
+    private val flags: Flags = Flags(getRegister(RegisterNames.F))
 
     /**
      * Stores the PC (default value at the end of boot rom is 0x0100)
