@@ -3,9 +3,11 @@ package memory
 /**
  * This interface represents the avaliable methods that a user class must implement when they need
  * to do bit operations
+ *
  * @author rodrigotimoteo
  **/
 interface BitOperations {
+
     /**
      * Sets the given bit to 1
      */

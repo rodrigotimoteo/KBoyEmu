@@ -1,5 +1,5 @@
 /**
-@author rodrigotimoteo
+ * @author rodrigotimoteo
  **/
 fun main() {
     System.setProperty("apple.laf.useScreenMenuBar", "true");

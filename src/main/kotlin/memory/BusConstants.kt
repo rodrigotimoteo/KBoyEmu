@@ -1,6 +1,8 @@
 package memory
 
 /**
+ * Holds references to the ids used to communicate with the main bus, and ask for certain values/actions
+ *
  * @author rodrigotimoteo
  **/
 @Suppress("MagicNumber")

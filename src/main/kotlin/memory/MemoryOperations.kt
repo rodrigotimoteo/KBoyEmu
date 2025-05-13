@@ -2,6 +2,7 @@ package memory
 
 /**
  * This interface represents the memory operations that are possible to do in memory modules
+ *
  * @author rodrigotimoteo
  **/
 interface MemoryOperations {

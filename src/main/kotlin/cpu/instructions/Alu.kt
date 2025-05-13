@@ -1,5 +1,8 @@
 package cpu.instructions
 
+import KBConstants.FILTER_2BYTE_WORD
+import KBConstants.FILTER_BYTE
+import cpu.registers.RegisterNames
 import memory.Bus
 
 /**
@@ -19,7 +22,7 @@ class Alu(
      * @return status of zero flag
      */
     private fun checkZero(value: Int): Boolean {
-        return (value and 0xFF) == 0x00
+        return (value and FILTER_2BYTE_WORD) == 0x00
     }
 
     /**
@@ -35,7 +38,7 @@ class Alu(
         value2: Int,
         carry: Int
     ): Boolean {
-        return (((value1 and 0xF) + (value2 and 0xF) + carry) and 0x10) == 0x10
+        return (((value1 and FILTER_BYTE) + (value2 and FILTER_BYTE) + carry) and 0x10) == 0x10
     }
 
     /**
@@ -45,7 +48,7 @@ class Alu(
      * @return status of carry flag
      */
     private fun checkCarryAdd(value: Int): Boolean {
-        return value > 0xFF
+        return value > FILTER_2BYTE_WORD
     }
 
     /**
@@ -62,7 +65,7 @@ class Alu(
         value2: Int,
         carry: Int
     ): Boolean {
-        return ((value1 and 0xF) - (value2 and 0xF) - carry) < 0
+        return ((value1 and FILTER_BYTE) - (value2 and FILTER_BYTE) - carry) < 0
     }
 
     /**
@@ -73,5 +76,8 @@ class Alu(
      */
     private fun checkCarrySub(value: Int): Boolean {
         return value < 0
+    }
+
+    public fun add(register: RegisterNames) {
     }
 }
