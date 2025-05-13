@@ -10,8 +10,13 @@ import kotlin.experimental.or
  * @author rodrigotimoteo
 **/
 data class Word(
-    var content: Byte = 0
+    private var content: Byte = 0
 ) : BitOperations {
+
+    /**
+     * Constructor used to build words out of Ints (just for ease of use)
+     */
+    constructor(content: Int): this(content = content.toByte())
 
     /**
      * Assigns a new value to a given Word

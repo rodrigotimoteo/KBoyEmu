@@ -2,6 +2,7 @@ package cpu.instructions
 
 import KBConstants.FILTER_2BYTE_WORD
 import KBConstants.FILTER_BYTE
+import cpu.registers.RegisterNames
 import memory.Bus
 
 /**
@@ -77,5 +78,6 @@ class Alu(
         return value < 0
     }
 
-    //protected fun add(String register)
+    public fun add(register: RegisterNames) {
+    }
 }

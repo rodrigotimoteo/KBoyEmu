@@ -1,4 +1,4 @@
-package cpu
+package cpu.registers
 
 /**
  * Stores the names of the avaliable registers

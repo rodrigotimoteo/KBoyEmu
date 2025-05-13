@@ -1,4 +1,4 @@
-package cpu
+package cpu.registers
 
 import KBConstants.AF_INITIAL_VALUE
 import KBConstants.BC_INITIAL_VALUE
@@ -9,6 +9,7 @@ import KBConstants.FILTER_TOP_BITS
 import KBConstants.HL_INITIAL_VALUE
 import KBConstants.PROGRAM_COUNTER_INITIAL_VALUE
 import KBConstants.STACK_POINTER_INITIAL_VALUE
+import cpu.Flags
 import memory.Bus
 import memory.Word
 import java.util.*
@@ -25,7 +26,7 @@ class Registers(
     /**
      * Stores all the registers with their associated name (register names kept as enum due to their limited nature)
      */
-    private val registersMap: EnumMap<RegisterNames, Word> = EnumMap(cpu.RegisterNames::class.java)
+    private val registersMap: EnumMap<RegisterNames, Word> = EnumMap(RegisterNames::class.java)
 
     /**
      * Stores the CPU flags hold by register F

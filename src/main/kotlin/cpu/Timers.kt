@@ -8,7 +8,5 @@ import memory.Bus
  *
  * @author rodrigotimoteo
  **/
-class Timers(
-    private val bus: Bus
-) {
+class Timers {
 }
