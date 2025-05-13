@@ -1,7 +1,11 @@
 package cpu.instructions
 
+import memory.Bus
+
 /**
  * @author rodrigotimoteo
  **/
-class Jump {
+class Jump(
+    private val bus: Bus
+) {
 }

@@ -39,14 +39,14 @@ class CPU(
                 fetchOperation()
 
                 val imeChange = interrupts.requestedInterruptChange()
-//                val interruptChangeCounter = timers.getInterruptChangeCounter()
-//                val machineCycles = timers.getMachineCycles()
+                val interruptChangeCounter = timers.getInterruptChangedCounter()
+                val machineCycles = timers.getMachineCycles()
 
-//                if (imeChange && interruptChangeCounter < machineCycles) {
-//                    interrupts.triggerImeChange()
-//                }
+                if (imeChange && interruptChangeCounter < machineCycles) {
+                    interrupts.triggerImeChange()
+                }
             } else {
-//                timers.tick()
+                timers.tick()
             }
 
             interrupts.handleInterrupt()
@@ -61,7 +61,7 @@ class CPU(
             registers.incrementProgramCounter(-1)
             interrupts.disableHaltBug()
         } else {
-            decoder.decode(programCounter)
+            decoder.decode(bus.getValue(programCounter))
         }
     }
 

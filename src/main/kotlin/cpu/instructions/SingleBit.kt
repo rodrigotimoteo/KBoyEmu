@@ -1,7 +1,11 @@
 package cpu.instructions
 
+import memory.Bus
+
 /**
  * @author rodrigotimoteo
  **/
-class SingleBit {
+class SingleBit(
+    private val bus: Bus
+) {
 }

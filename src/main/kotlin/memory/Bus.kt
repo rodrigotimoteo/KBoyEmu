@@ -22,6 +22,10 @@ class Bus(
 
     //TODO LACKS CONTROLLER
 
+    public fun setCPU(cpu: CPU) {
+        this.cpu = cpu
+    }
+
     fun isCGB(): Boolean {
         return isCGB
     }
