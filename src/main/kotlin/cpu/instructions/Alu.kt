@@ -104,7 +104,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf(RegisterNames.A, finalValue))
-        flags.setFlags(zero, false, halfCarry, carry)
+        flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
 
         bus.executeFromCPU(BusConstants.INCR_PC, arrayListOf(1))
     }
@@ -129,7 +129,7 @@ class Alu(
 
 
         bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf(RegisterNames.A, finalValue))
-        flags.setFlags(zero, false, halfCarry, carry)
+        flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
 
         if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, arrayListOf(1))
         else bus.executeFromCPU(BusConstants.INCR_PC, arrayListOf(2))

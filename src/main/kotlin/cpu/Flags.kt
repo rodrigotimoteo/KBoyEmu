@@ -34,11 +34,11 @@ class Flags(
      * @param half status of half carry flag
      * @param carry status of carry flag
      */
-    fun setFlags(zero: Boolean, subtract: Boolean, half: Boolean, carry: Boolean) {
-        if (zero) setZeroFlag() else resetZeroFlag()
-        if (subtract) setSubtractFlag() else resetSubtractFlag()
-        if (half) setHalfCarryFlag() else resetHalfCarryFlag()
-        if (carry) setCarryFlag() else resetCarryFlag()
+    fun setFlags(zero: Boolean?, subtract: Boolean?, half: Boolean?, carry: Boolean?) {
+        if (zero == true) setZeroFlag() else if (zero == false) resetZeroFlag()
+        if (subtract == true) setSubtractFlag() else if (subtract == false) resetSubtractFlag()
+        if (half == true) setHalfCarryFlag() else if (half == false) resetHalfCarryFlag()
+        if (carry == true) setCarryFlag() else if (carry == false) resetCarryFlag()
     }
 
     /**
