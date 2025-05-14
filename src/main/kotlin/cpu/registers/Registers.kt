@@ -31,7 +31,7 @@ class Registers(
     /**
      * Stores the CPU flags hold by register F
      */
-    private val flags: Flags = Flags(getRegister(RegisterNames.F))
+    internal val flags: Flags = Flags(getRegister(RegisterNames.F))
 
     /**
      * Stores the PC (default value at the end of boot rom is 0x0100)
@@ -54,25 +54,18 @@ class Registers(
     }
 
     /**
-     * Getter for the flags object
-     *
-     * @return cpu flags
-     */
-    public fun getFlags(): Flags = flags
-
-    /**
      * Getter for the PC
      *
      * @return PC value
      */
-    public fun getProgramCounter(): Int = programCounter
+    fun getProgramCounter(): Int = programCounter
 
     /**
      * Increments the program counter by the given value
      *
      * @param value to increase program counter
      */
-    public fun incrementProgramCounter(value: Int) {
+    fun incrementProgramCounter(value: Int) {
         programCounter += value
     }
 
@@ -81,7 +74,7 @@ class Registers(
      *
      * @param value to assign program counter
      */
-    public fun setProgramCounter(value: Int) {
+    fun setProgramCounter(value: Int) {
         programCounter = value
     }
 
@@ -90,7 +83,7 @@ class Registers(
      *
      * @return SP value
      */
-    public fun getStackPointer(): Int {
+    fun getStackPointer(): Int {
         return stackPointer
     }
 
@@ -99,7 +92,7 @@ class Registers(
      *
      * @param value to increase stack pointer
      */
-    public fun incrementStackPointer(value: Int) {
+    fun incrementStackPointer(value: Int) {
         stackPointer += value
     }
 
@@ -108,7 +101,7 @@ class Registers(
      *
      * @param value to assign stack pointer
      */
-    public fun setStackPointer(value: Int) {
+    fun setStackPointer(value: Int) {
         stackPointer = value
     }
 
@@ -118,7 +111,7 @@ class Registers(
      * @param register name
      * @return content of given register
      */
-    public fun getRegister(register: RegisterNames): Word = registersMap[register]!!
+    fun getRegister(register: RegisterNames): Word = registersMap[register]!!
 
     /**
      * Sets the register content to the given value
@@ -126,7 +119,7 @@ class Registers(
      * @param register name
      * @param value to assign to the given register
      */
-    public fun setRegister(register: RegisterNames, value: Int) = getRegister(register).setValue(value)
+    fun setRegister(register: RegisterNames, value: Int) = getRegister(register).setValue(value)
 
     /**
      * Returns the result of the aggregation of register A (as the left value) and register F (as the right value)
@@ -134,7 +127,7 @@ class Registers(
      *
      * @return register A and F together
      */
-    public fun getAF(): Int = (getRegister(RegisterNames.A).getValue() shl EIGHT_BITS) +
+    fun getAF(): Int = (getRegister(RegisterNames.A).getValue() shl EIGHT_BITS) +
             getRegister(RegisterNames.F).getValue()
 
     /**
@@ -143,7 +136,7 @@ class Registers(
      *
      * @return register B and C together
      */
-    public fun getBC(): Int = (getRegister(RegisterNames.B).getValue() shl EIGHT_BITS) +
+    fun getBC(): Int = (getRegister(RegisterNames.B).getValue() shl EIGHT_BITS) +
             getRegister(RegisterNames.C).getValue()
 
     /**
@@ -152,7 +145,7 @@ class Registers(
      *
      * @return register D and E together
      */
-    public fun getDE(): Int = (getRegister(RegisterNames.D).getValue() shl EIGHT_BITS) +
+    fun getDE(): Int = (getRegister(RegisterNames.D).getValue() shl EIGHT_BITS) +
             getRegister(RegisterNames.E).getValue()
 
     /**
@@ -161,7 +154,7 @@ class Registers(
      *
      * @return register H and L together
      */
-    public fun getHL(): Int = (getRegister(RegisterNames.H).getValue() shl EIGHT_BITS) +
+    fun getHL(): Int = (getRegister(RegisterNames.H).getValue() shl EIGHT_BITS) +
             getRegister(RegisterNames.L).getValue()
 
     /**
@@ -170,7 +163,7 @@ class Registers(
      * @param value to assign
      */
 
-    public fun setAF(value: Int) {
+    fun setAF(value: Int) {
         setRegister(RegisterNames.A, (value and FILTER_TOP_BITS) shr EIGHT_BITS)
         setRegister(RegisterNames.F, value and FILTER_LOWER_BITS)
     }
@@ -180,7 +173,7 @@ class Registers(
      *
      * @param value to assign
      */
-    public fun setBC(value: Int) {
+    fun setBC(value: Int) {
         setRegister(RegisterNames.B, (value and FILTER_TOP_BITS) shr EIGHT_BITS)
         setRegister(RegisterNames.C, value and FILTER_LOWER_BITS)
     }
@@ -190,7 +183,7 @@ class Registers(
      *
      * @param value to assign
      */
-    public fun setDE(value: Int) {
+    fun setDE(value: Int) {
         setRegister(RegisterNames.D, (value and FILTER_TOP_BITS) shr EIGHT_BITS)
         setRegister(RegisterNames.E, value and FILTER_LOWER_BITS)
     }
@@ -200,7 +193,7 @@ class Registers(
      *
      * @param value to assign
      */
-    public fun setHL(value: Int) {
+    fun setHL(value: Int) {
         setRegister(RegisterNames.H, (value and FILTER_TOP_BITS) shr EIGHT_BITS)
         setRegister(RegisterNames.L, value and FILTER_LOWER_BITS)
     }

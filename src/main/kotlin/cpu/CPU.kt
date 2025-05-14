@@ -13,11 +13,11 @@ import memory.Bus
 class CPU(
     private val bus: Bus
 ) {
-    private val registers: Registers = Registers(bus)
+    internal val registers: Registers = Registers(bus)
 
-    private val timers: Timers = Timers()
+    internal val timers: Timers = Timers()
 
-    private val interrupts: Interrupts = Interrupts(bus)
+    internal val interrupts: Interrupts = Interrupts(bus)
 
     private val decoder: Decoder = Decoder(bus)
 
@@ -70,12 +70,30 @@ class CPU(
      *
      * @return true if CPU is halted false otherwise
      */
-    public fun isHalted(): Boolean = isHalted
+    fun isHalted(): Boolean = isHalted
+
+    /**
+     * Sets the halted state to the provided one
+     *
+     * @param haltedState should be halted or not (true if should false otherwise)
+     */
+    fun setHalted(haltedState: Boolean) {
+        isHalted = haltedState
+    }
 
     /**
      * Getter for the isStopped flag
      *
      * @return true if CPU is stopped false otherwise
      */
-    public fun isStopped(): Boolean = isStopped
+    fun isStopped(): Boolean = isStopped
+
+    /**
+     * Sets the stopped state to the provided one
+     *
+     * @param stoppedState should be stopped or not (true if should false otherwise)
+     */
+    fun setStopped(stoppedState: Boolean) {
+        isStopped = stoppedState
+    }
 }
