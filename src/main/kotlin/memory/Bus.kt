@@ -10,6 +10,7 @@ import java.util.logging.Logger
  *
  * @author rodrigotimoteo
  **/
+@Suppress("MagicNumber")
 class Bus(
     private val isCGB: Boolean,
     private val rom: MemoryModule
@@ -70,7 +71,7 @@ class Bus(
     fun executeFromCPU(action: BusConstants, parameters: Any) {
         when (action) {
             BusConstants.TICK_TIMERS -> cpu.timers.tick()
-            BusConstants.SET_REGISTER -> (parameters as Array<*>).let {
+            BusConstants.SET_REGISTER -> (parameters as Array<*>).let { 
                 cpu.registers.setRegister(it[0] as RegisterNames, it[1] as Int)
             }
             BusConstants.INCR_PC -> cpu.registers.incrementProgramCounter(parameters as Int)
@@ -105,7 +106,7 @@ class Bus(
             BusConstants.GET_STOPPED -> cpu.isStopped()
             BusConstants.GET_MC -> cpu.timers.getMachineCycles()
             BusConstants.GET_HALT_MC -> cpu.timers.getHaltCycleCounter()
-            else -> throw IllegalStateException("Unexpected value! $action")
+            else -> error("Unexpected value! $action")
         }
     }
 

@@ -8,7 +8,7 @@ import kotlin.system.exitProcess
 /**
  * @author rodrigotimoteo
  **/
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "LargeClass")
 class Decoder(
     private val bus: Bus
 ) {
@@ -69,6 +69,7 @@ class Decoder(
         }
     }
 
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun handleRegularOPs(operationCode: Int) {
         when (operationCode) {
             0x00 ->  // NOP
@@ -88,7 +89,7 @@ class Decoder(
             0x07 ->  // RLCA
                 rotateShift.rlca()
             0x08 ->  // LD (u16),SP
-                load16Bit.LDnnSP()
+                load16Bit.ldNNSP()
             0x09 ->  // ADD HL,BC
                 alu.addHL(0)
             0x0A ->  // LD A,(BC)
@@ -554,7 +555,7 @@ class Decoder(
             0xF7 ->  // RST 30H
                 jump.rst(6)
             0xF8 ->  // LDHL SP,n
-                load16Bit.LDHL()
+                load16Bit.ldHL()
             0xF9 ->  // LD SP,HL
                 load16Bit.ldSPHL()
             0xFA ->  // LD A,(nn)
@@ -572,6 +573,7 @@ class Decoder(
         }
     }
 
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun handleCBOPs(operationCode: Int) {
         when (operationCode) {
             0x00 ->  // RLC B
