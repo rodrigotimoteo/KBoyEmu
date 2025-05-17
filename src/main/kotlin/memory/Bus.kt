@@ -1,5 +1,6 @@
 package memory
 
+import KBConstants
 import cpu.CPU
 import cpu.registers.RegisterNames
 import java.util.logging.Level
@@ -17,17 +18,13 @@ class Bus(
 ) {
     private val memoryManager: MemoryManager = MemoryManager(this, rom)
 
-    private lateinit var cpu: CPU
+    private val cpu: CPU = CPU(this)
 
     //TODO LACKS PPU
 
     //TODO LACKS DISPLAY
 
     //TODO LACKS CONTROLLER
-
-    public fun setCPU(cpu: CPU) {
-        this.cpu = cpu
-    }
 
     fun isCGB(): Boolean {
         return isCGB
@@ -64,10 +61,26 @@ class Bus(
         return memoryManager.getWord(memoryAddress)
     }
 
+    /**
+     * Stores the program counter in the stack pointer and decreases its pointer by 2
+     */
     fun storeProgramCounterInStackPointer() {
-//        val stackPointer = cpu.getRegisters()
+        val stackPointer = cpu.registers.getStackPointer()
+        val programCounter = cpu.registers.getProgramCounter()
+
+        setValue(stackPointer - 1, (programCounter and KBConstants.FILTER_TOP_BITS) shr 8)
+        setValue(stackPointer - 2, programCounter and KBConstants.FILTER_LOWER_BITS)
+
+        cpu.registers.incrementStackPointer(-2)
     }
 
+    /**
+     * Executes an action on the CPU of the Game Boy based on predifined options
+     *
+     * @param action which action to perform
+     * @param parameters to use
+     */
+    @Suppress("CyclomaticComplexMethod")
     fun executeFromCPU(action: BusConstants, parameters: Any) {
         when (action) {
             BusConstants.TICK_TIMERS -> cpu.timers.tick()
@@ -92,6 +105,12 @@ class Bus(
         }
     }
 
+    /**
+     * Gets values from the CPU from any part of the architecure
+     *
+     * @param action which value to get
+     * @param parameters to use
+     */
     fun getFromCPU(action: BusConstants, parameters: Any): Any {
         return when (action) {
             BusConstants.GET_FLAGS -> cpu.registers.flags
@@ -129,6 +148,7 @@ class Bus(
 
     companion object {
         /**
+         * Used for actions that do not require any argument instead of passing null
          */
         val EMPTY_ARGUMENTS = emptyArray<String>()
     }

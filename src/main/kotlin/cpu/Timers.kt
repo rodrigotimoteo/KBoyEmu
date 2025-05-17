@@ -54,19 +54,19 @@ class Timers {
      *
      * @return machine cycle counter
      */
-    public fun getMachineCycles(): Int = machineCycles
+    fun getMachineCycles(): Int = machineCycles
 
     /**
      * Halt cycles getter method
      *
      * @return halt cycle counter
      */
-    public fun getHaltCycleCounter(): Int = haltCycleCounter
+    fun getHaltCycleCounter(): Int = haltCycleCounter
 
     /**
      * Halt cycles counter for when Halt is triggered
      */
-    public fun setHaltCycleCounter() {
+    fun setHaltCycleCounter() {
         haltCycleCounter = machineCycles
     }
 
@@ -75,12 +75,12 @@ class Timers {
      *
      * @return machine cycle count
      */
-    public fun getInterruptChangedCounter(): Int = interruptChangedCounter
+    fun getInterruptChangedCounter(): Int = interruptChangedCounter
 
     /**
      * Setter for the last time interrupt status was changed
      */
-    public fun setInterruptChangedCounter() {
+    fun setInterruptChangedCounter() {
         interruptChangedCounter = machineCycles
     }
 }
