@@ -95,6 +95,7 @@ class Interrupts(
      *
      * @param interrupt bit to set in the IF Register
      */
+    @Suppress("MagicNumber")
     public fun requestInterrupt(interrupt: Int) {
         if (interrupt !in 0..4) return
 

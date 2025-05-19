@@ -48,7 +48,7 @@ open class MemoryModule(
      */
     private fun initializeMemory(content: ByteArray) {
         for ((i, byte) in content.withIndex()) {
-            memory[i / size][i % size].content = byte
+            memory[i / size][i % size].setValue(byte.toInt())
         }
     }
 
