@@ -91,7 +91,7 @@ class Alu(
      *
      * @param register used to retrieve the add value
      */
-    public fun add(register: RegisterNames) {
+    fun add(register: RegisterNames) {
         val givenRegister = bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word
         val registerA = bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word
 
@@ -106,15 +106,16 @@ class Alu(
         bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf(RegisterNames.A, finalValue))
         flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
 
-        bus.executeFromCPU(BusConstants.INCR_PC, arrayListOf(1))
+        bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
     /**
      * Performs the add operation from any given value stored in a register to register A
      *
-     * @param register used to retrieve the add value
+     * @param memoryAddress used to retrieve the add value
+     * @param useHL if should retrive from HL register
      */
-    public fun addSpecial(memoryAddress: Int, useHL: Boolean) {
+    fun addSpecial(memoryAddress: Int, useHL: Boolean) {
         bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
 
         val registerA = bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word
@@ -131,7 +132,33 @@ class Alu(
         bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf(RegisterNames.A, finalValue))
         flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
 
-        if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, arrayListOf(1))
-        else bus.executeFromCPU(BusConstants.INCR_PC, arrayListOf(2))
+        if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, 1)
+        else bus.executeFromCPU(BusConstants.INCR_PC, 2)
+    }
+
+    /**
+     * Performs the operations of adding any given value (in this case only the
+     * ones contained inside registers) to A also adding the carry flag status
+     * (1 if true 0 otherwise)
+     *
+     * @param register used to retrieve the register to add to register A's value
+     */
+    fun adc(register: RegisterNames) {
+        val givenRegister = bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word
+        val registerA = bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word
+
+        val valueInGivenRegister = givenRegister.getValue()
+        val valueInRegisterA = registerA.getValue()
+        val carryAsValue = if (flags.getCarryFlag()) 1 else 0
+        val finalValue = valueInGivenRegister + valueInRegisterA + carryAsValue
+
+        val halfCarry = checkHalfCarryAdd(valueInGivenRegister, valueInRegisterA, carryAsValue)
+        val carry = checkCarryAdd(finalValue)
+        val zero = checkZero(finalValue)
+
+        flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
+
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 }
