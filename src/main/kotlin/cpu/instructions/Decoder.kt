@@ -6,6 +6,8 @@ import memory.BusConstants
 import kotlin.system.exitProcess
 
 /**
+ * Class responsible for decoding instructions based on program counter and executing them with the given arguments
+ *
  * @author rodrigotimoteo
  **/
 @Suppress("MagicNumber", "LargeClass")
@@ -457,67 +459,67 @@ class Decoder(
             0xBF ->  // CP A,A
                 alu.cp(RegisterNames.A)
             0xC0 ->  // RET NZ
-                jump.retCond("NZ")
+                jump.retCond(JumpConstants.NZ)
             0xC1 ->  // POP BC
                 load16Bit.pop(1)
             0xC2 ->  // JP NZ,u16
-                jump.jpCond("NZ")
+                jump.jpCond(JumpConstants.NZ)
             0xC3 ->  // JP u16
                 jump.jp()
             0xC4 ->  // CALL NZ, nn
-                jump.callCond("NZ")
+                jump.callCond(JumpConstants.NZ)
             0xC5 ->  // PUSH BC
                 load16Bit.push(1)
             0xC6 ->  // ADD A,#
                 alu.addSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1,
                     false)
             0xC7 ->  // RST 00H
-                jump.rst(0)
+                jump.rst(0x00)
             0xC8 ->  // RET Z
-                jump.retCond("Z")
+                jump.retCond(JumpConstants.Z)
             0xC9 ->  // RET
                 jump.ret()
             0xCA ->  // JP Z,u16
-                jump.jpCond("Z")
+                jump.jpCond(JumpConstants.Z)
             0xCB -> {
                 cbInstruction = true
                 bus.executeFromCPU(BusConstants.INCR_PC, arrayOf<String>("1"))
                 decode(bus.getValue((bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int)))
             }
             0xCC ->  // CALL Z,nn
-                jump.callCond("Z")
+                jump.callCond(JumpConstants.Z)
             0xCD ->  // CALL u16
                 jump.call()
             0xCE ->  // ADC A,#
                 alu.adcSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xCF ->  // RST 08H
-                jump.rst(1)
+                jump.rst(0x08)
             0xD0 ->  // RET NC
-                jump.retCond("NC")
+                jump.retCond(JumpConstants.NC)
             0xD1 ->  // POP DE
                 load16Bit.pop(2)
             0xD2 ->  // JP NC,u16
-                jump.jpCond("NC")
+                jump.jpCond(JumpConstants.NC)
             0xD4 ->  // CALL NC,nn
-                jump.callCond("NC")
+                jump.callCond(JumpConstants.NC)
             0xD5 ->  // PUSH DE
                 load16Bit.push(2)
             0xD6 ->  // SUB A, #
                 alu.subSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xD7 ->  // RST 10H
-                jump.rst(2)
+                jump.rst(0x10)
             0xD8 ->  // RET C
-                jump.retCond(RegisterNames.C)
+                jump.retCond(JumpConstants.C)
             0xD9 ->  // RETI
                 jump.reti()
             0xDA ->  // JP C,u16
-                jump.jpCond(RegisterNames.C)
+                jump.jpCond(JumpConstants.C)
             0xDC ->  // CALL C,nn
-                jump.callCond(RegisterNames.C)
+                jump.callCond(JumpConstants.C)
             0xDE ->  // SBC A,#
                 alu.sbcSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xDF ->  // RST 18H
-                jump.rst(3)
+                jump.rst(0x18)
             0xE0 ->  // LD (FF00+u8),A
                 load8Bit.ldh(true)
             0xE1 ->  // POP (HL)
@@ -529,7 +531,7 @@ class Decoder(
             0xE6 ->  // AND #
                 alu.andSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xE7 ->  // RST 20H
-                jump.rst(4)
+                jump.rst(0x20)
             0xE8 ->  // ADD SP,n
                 alu.addSP(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1)
             0xE9 ->  // JP (HL)
@@ -539,7 +541,7 @@ class Decoder(
             0xEE ->  // XOR #
                 alu.xorSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xEF ->  // RST 28H
-                jump.rst(5)
+                jump.rst(0x28)
             0xF0 ->  // LD A,(FF00+u8)
                 load8Bit.ldh(false)
             0xF1 ->  // POP AF
@@ -553,7 +555,7 @@ class Decoder(
             0xF6 ->  // OR #
                 alu.orSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xF7 ->  // RST 30H
-                jump.rst(6)
+                jump.rst(0x30)
             0xF8 ->  // LDHL SP,n
                 load16Bit.ldHL()
             0xF9 ->  // LD SP,HL
@@ -565,13 +567,14 @@ class Decoder(
             0xFE ->  // CP A,u8
                 alu.cpSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xFF ->  // RST 38H
-                jump.rst(7)
+                jump.rst(0x38)
             else -> {
                 println("No OPCode or Lacks Implementation")
                 exitProcess(0)
             }
         }
     }
+
 
     @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun handleCBOPs(operationCode: Int) {
