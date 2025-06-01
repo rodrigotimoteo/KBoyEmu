@@ -6,6 +6,8 @@ import memory.BusConstants
 import kotlin.system.exitProcess
 
 /**
+ * Class responsible for decoding instructions based on program counter and executing them with the given arguments
+ *
  * @author rodrigotimoteo
  **/
 @Suppress("MagicNumber", "LargeClass")
@@ -572,6 +574,7 @@ class Decoder(
             }
         }
     }
+
 
     @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun handleCBOPs(operationCode: Int) {
