@@ -26,8 +26,9 @@ class RotateShift(
     fun rlca() {
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
-        val carry = (valueInRegisterA and 0x80) == 0x80
-        val finalValue = ((valueInRegisterA shl 1) and 0xFF) or ((valueInRegisterA and 0x80) shr 7)
+        val carry = (valueInRegisterA and KBConstants.FILTER_2BYTE_WORD) == KBConstants.FILTER_2BYTE_WORD
+        val finalValue = ((valueInRegisterA shl 1) and KBConstants.FILTER_2BYTE_WORD) or
+                ((valueInRegisterA and KBConstants.FILTER_2BYTE_WORD) shr 7)
 
         flags.setFlags(zero = false, subtract = false, half = false, carry = carry)
 
@@ -41,8 +42,9 @@ class RotateShift(
     fun rla() {
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
-        val carry = ((valueInRegisterA and 0x80) == 0x80)
-        val finalValue = ((valueInRegisterA shl 1) and 0xFF) or if(flags.getCarryFlag()) 1 else 0
+        val carry = ((valueInRegisterA and KBConstants.FILTER_2BYTE_WORD) == KBConstants.FILTER_2BYTE_WORD)
+        val finalValue = ((valueInRegisterA shl 1) and KBConstants.FILTER_2BYTE_WORD) or
+                if(flags.getCarryFlag()) 1 else 0
 
         flags.setFlags(zero = false, subtract = false, half = false, carry = carry)
 
@@ -57,7 +59,8 @@ class RotateShift(
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
         val carry = (valueInRegisterA and 0x01) == 0x01
-        val finalValue = ((valueInRegisterA shr 1) and 0xFF) or ((valueInRegisterA and 0x01) shl 7)
+        val finalValue = ((valueInRegisterA shr 1) and KBConstants.FILTER_2BYTE_WORD) or
+                ((valueInRegisterA and 0x01) shl 7)
 
         flags.setFlags(zero = false, subtract = false, half = false, carry = carry)
 
@@ -72,7 +75,8 @@ class RotateShift(
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
         val carry = (valueInRegisterA and 0x01) == 0x01
-        val finalValue = (((valueInRegisterA shr 1) and 0xFF) or ((if (flags.getCarryFlag()) 1 else 0) shl 7)) and 0xFF
+        val finalValue = (((valueInRegisterA shr 1) and KBConstants.FILTER_2BYTE_WORD)
+                or ((if (flags.getCarryFlag()) 1 else 0) shl 7)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = false, subtract = false, half = false, carry = carry)
 
@@ -88,8 +92,9 @@ class RotateShift(
     fun rlc(register: RegisterNames) {
         val valueInRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
 
-        val carry = (valueInRegister and 0x80) == 0x80
-        val finalValue = (((valueInRegister shl 1) and 0xFF) or ((valueInRegister and 0x80) shr 7)) and 0xFF
+        val carry = (valueInRegister and KBConstants.FILTER_2BYTE_WORD) == KBConstants.FILTER_2BYTE_WORD
+        val finalValue = (((valueInRegister shl 1) and KBConstants.FILTER_2BYTE_WORD)
+                or ((valueInRegister and KBConstants.FILTER_2BYTE_WORD) shr 7)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -108,8 +113,9 @@ class RotateShift(
         repeat(2) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS) }
 
         val givenValue = bus.getValue(memoryAddress)
-        val carry = (givenValue and 0x80) == 0x80
-        val finalValue = (((givenValue shl 1) and 0xFF) or ((givenValue and 0x80) shr 7)) and 0xFF
+        val carry = (givenValue and KBConstants.FILTER_2BYTE_WORD) == KBConstants.FILTER_2BYTE_WORD
+        val finalValue = (((givenValue shl 1) and KBConstants.FILTER_2BYTE_WORD)
+                or ((givenValue and KBConstants.FILTER_2BYTE_WORD) shr 7)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -124,8 +130,9 @@ class RotateShift(
      */
     fun rl(register: RegisterNames) {
         val valueInRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
-        val carry = (valueInRegister and 0x80) == 0x80
-        val finalValue = (((valueInRegister shl 1) and 0xFF) or ((if (flags.getCarryFlag()) 1 else 0))) and 0xFF
+        val carry = (valueInRegister and KBConstants.FILTER_2BYTE_WORD) == KBConstants.FILTER_2BYTE_WORD
+        val finalValue = (((valueInRegister shl 1) and KBConstants.FILTER_2BYTE_WORD)
+                or ((if (flags.getCarryFlag()) 1 else 0))) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -142,8 +149,9 @@ class RotateShift(
         repeat(2) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS) }
 
         val givenValue = bus.getValue(memoryAddress)
-        val carry = (givenValue and 0x80) == 0x80
-        val finalValue = (((givenValue shl 1) and 0xFF) or (if (flags.getCarryFlag()) 1 else 0)) and 0xFF
+        val carry = (givenValue and KBConstants.FILTER_2BYTE_WORD) == KBConstants.FILTER_2BYTE_WORD
+        val finalValue = (((givenValue shl 1) and KBConstants.FILTER_2BYTE_WORD)
+                or (if (flags.getCarryFlag()) 1 else 0)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -179,7 +187,8 @@ class RotateShift(
 
         val givenValue = bus.getValue(memoryAddress)
         val carry = (givenValue and 0x01) == 0x01
-        val finalValue = (((givenValue shr 1) and 0xFF) or ((givenValue and 0x01) shl 7)) and 0xFF
+        val finalValue = (((givenValue shr 1) and KBConstants.FILTER_2BYTE_WORD)
+                or ((givenValue and 0x01) shl 7)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -195,7 +204,8 @@ class RotateShift(
     fun rr(register: RegisterNames) {
         val valueInRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val carry = (valueInRegister and 0x01) == 0x01
-        val finalValue = (((valueInRegister shr 1) and 0xFF) or ((if (flags.getCarryFlag()) 1 else 0) shl 7)) and 0xFF
+        val finalValue = (((valueInRegister shr 1) and KBConstants.FILTER_2BYTE_WORD)
+                or ((if (flags.getCarryFlag()) 1 else 0) shl 7)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -213,7 +223,8 @@ class RotateShift(
 
         val givenValue = bus.getValue(memoryAddress)
         val carry = (givenValue and 0x01) == 0x01
-        val finalValue = (((givenValue shr 1) and 0xFF) or ((if (flags.getCarryFlag()) 1 else 0) shl 7)) and 0xFF
+        val finalValue = (((givenValue shr 1) and KBConstants.FILTER_2BYTE_WORD)
+                or ((if (flags.getCarryFlag()) 1 else 0) shl 7)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -228,8 +239,8 @@ class RotateShift(
      */
     fun sla(register: RegisterNames) {
         val valueInRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
-        val carry = (valueInRegister and 0x80) == 0x80
-        val finalValue = (valueInRegister shl 1) and 0xFF
+        val carry = (valueInRegister and KBConstants.HIGHEST_BIT) == KBConstants.HIGHEST_BIT
+        val finalValue = (valueInRegister shl 1) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -246,8 +257,8 @@ class RotateShift(
         repeat(2) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS) }
 
         val givenValue = bus.getValue(memoryAddress)
-        val carry = (givenValue and 0x80) == 0x80
-        val finalValue = (givenValue shl 1) and 0xFF
+        val carry = (givenValue and KBConstants.HIGHEST_BIT) == KBConstants.HIGHEST_BIT
+        val finalValue = (givenValue shl 1) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -262,7 +273,8 @@ class RotateShift(
      */
     fun swap(register: RegisterNames) {
         val valueInRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
-        val finalValue = (((valueInRegister and 0xF0) shr 4) or ((valueInRegister and 0x0F) shl 4)) and 0xFF
+        val finalValue = (((valueInRegister and 0xF0) shr 4) or
+                ((valueInRegister and 0x0F) shl 4)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = false)
 
@@ -280,7 +292,8 @@ class RotateShift(
         repeat(2) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS) }
 
         val givenValue = bus.getValue(memoryAddress)
-        val finalValue = (((givenValue and 0x0F) shl 4) or ((givenValue and 0xF0) shr 4)) and 0xFF
+        val finalValue = (((givenValue and 0x0F) shl 4) or
+                ((givenValue and 0xF0) shr 4)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = false)
 
@@ -297,7 +310,8 @@ class RotateShift(
     fun sra(register: RegisterNames) {
         val valueInRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val carry = (valueInRegister and 0x01) != 0
-        val finalValue = ((valueInRegister shr 1) or (valueInRegister and 0x80)) and 0xFF
+        val finalValue = ((valueInRegister shr 1) or
+                (valueInRegister and KBConstants.FILTER_2BYTE_WORD))and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -316,7 +330,8 @@ class RotateShift(
 
         val givenValue = bus.getValue(memoryAddress)
         val carry = (givenValue and 0x01) != 0
-        val finalValue = ((givenValue shr 1) or (givenValue and 0x80)) and 0xFF
+        val finalValue = ((givenValue shr 1) or
+                (givenValue and KBConstants.FILTER_2BYTE_WORD)) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -333,7 +348,7 @@ class RotateShift(
     fun srl(register: RegisterNames) {
         val valueInRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val carry = (valueInRegister and 0x01) == 0x01
-        val finalValue = (valueInRegister shr 1) and 0xFF
+        val finalValue = (valueInRegister shr 1) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 
@@ -352,7 +367,7 @@ class RotateShift(
 
         val givenValue = bus.getValue(memoryAddress)
         val carry = (givenValue and 0x01) == 0x01
-        val finalValue = (givenValue shr 1) and 0xFF
+        val finalValue = (givenValue shr 1) and KBConstants.FILTER_2BYTE_WORD
 
         flags.setFlags(zero = finalValue == 0x00, subtract = false, half = false, carry = carry)
 

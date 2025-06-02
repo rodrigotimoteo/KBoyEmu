@@ -26,6 +26,6 @@ object KBConstants {
     const val ZERO_BIT = 7
 
     const val TWO_COMPLIMENT = 0x7F
-    const val HIGHIEST_BIT = 0x80
+    const val HIGHEST_BIT = 0x80
 
 }

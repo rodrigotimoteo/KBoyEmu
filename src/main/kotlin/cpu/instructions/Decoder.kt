@@ -30,12 +30,12 @@ class Decoder(
     private val jump: Jump = Jump(bus)
 
     /**
-     * Holds reference for 8 Bit Loads instruction handler
+     * Holds reference for 8-bit Loads instruction handler
      */
     private val load8Bit: Load8Bit = Load8Bit(bus)
 
     /**
-     * Holds reference for 16 Bit Loads instruction handler
+     * Holds reference for 16-bit Loads instruction handler
      */
     private val load16Bit: Load16Bit = Load16Bit(bus)
 
@@ -79,7 +79,7 @@ class Decoder(
             0x01 ->  // LD BC,u16
                 load16Bit.ld16bit(0)
             0x02 ->  // LD (BC),A
-                load8Bit.ldTwoRegisters(0)
+                load8Bit.ldTwoRegisters(BusConstants.GET_BC)
             0x03 ->  // INC BC
                 alu.incR(0)
             0x04 ->  // INC B
@@ -95,7 +95,7 @@ class Decoder(
             0x09 ->  // ADD HL,BC
                 alu.addHL(0)
             0x0A ->  // LD A,(BC)
-                load8Bit.ldTwoRegistersIntoA(0)
+                load8Bit.ldTwoRegistersIntoA(BusConstants.GET_BC)
             0x0B ->  // DEC BC
                 alu.decR(0)
             0x0C ->  // INC C
@@ -111,7 +111,7 @@ class Decoder(
             0x11 ->  // LD DE,u16
                 load16Bit.ld16bit(1)
             0x12 ->  // LD (DE),A
-                load8Bit.ldTwoRegisters(1)
+                load8Bit.ldTwoRegisters(BusConstants.GET_DE)
             0x13 ->  // INC DE
                 alu.incR(1)
             0x14 ->  // INC D
@@ -127,7 +127,7 @@ class Decoder(
             0x19 ->  // ADD HL,DE
                 alu.addHL(1)
             0x1A ->  // LD A,(DE)
-                load8Bit.ldTwoRegistersIntoA(1)
+                load8Bit.ldTwoRegistersIntoA(BusConstants.GET_DE)
             0x1B ->  // DEC DE
                 alu.decR(1)
             0x1C ->  // INC E
@@ -313,7 +313,7 @@ class Decoder(
             0x76 ->  // HALT
                 control.halt()
             0x77 ->  // LD (HL),A
-                load8Bit.ldTwoRegisters(2)
+                load8Bit.ldTwoRegisters(BusConstants.GET_HL)
             0x78 ->  // LD A,B
                 load8Bit.ld(RegisterNames.A, RegisterNames.B)
             0x79 ->  // LD A,C
@@ -327,7 +327,7 @@ class Decoder(
             0x7D ->  // LD A,L
                 load8Bit.ld(RegisterNames.A, RegisterNames.L)
             0x7E ->  // LD A,(HL)
-                load8Bit.ldTwoRegistersIntoA(2)
+                load8Bit.ldTwoRegistersIntoA(BusConstants.GET_HL)
             0x7F ->  // LD A,A
                 load8Bit.ld(RegisterNames.A, RegisterNames.A)
             0x80 ->  // ADD A,B
