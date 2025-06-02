@@ -80,7 +80,7 @@ class Load16Bit(
 
         val halfCarry = ((stackPointer and KBConstants.FILTER_BYTE) + (valueToAssign and KBConstants.FILTER_BYTE)
                 and 0x10) == 0x10
-        val carry = (((stackPointer and KBConstants.FILTER_2BYTE_WORD) + valueToAssign) and 0x100) == 0x100
+        val carry = (((stackPointer and KBConstants.FILTER_2_BYTES) + valueToAssign) and 0x100) == 0x100
 
         flags.setFlags(zero = false, subtract = false, half = halfCarry, carry = carry)
 
@@ -96,7 +96,7 @@ class Load16Bit(
 
         val address = bus.calculateNN()
         val stackPointer = bus.getFromCPU(BusConstants.GET_SP, Bus.EMPTY_ARGUMENTS) as Int
-        bus.setValue(address, stackPointer and KBConstants.FILTER_2BYTE_WORD)
+        bus.setValue(address, stackPointer and KBConstants.FILTER_2_BYTES)
         bus.executeFromCPU(BusConstants.INCR_PC, 3)
     }
 

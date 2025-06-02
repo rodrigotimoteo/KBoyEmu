@@ -22,7 +22,7 @@ class Control(
     fun nop() = bus.executeFromCPU(BusConstants.INCR_PC, 1)
 
     /**
-     * Comlements the carry flag
+     * Complements the carry flag
      */
     fun ccf() {
         flags.setFlags(zero = null, subtract = false, half = false, carry = !flags.getCarryFlag())
@@ -69,7 +69,7 @@ class Control(
     }
 
     /**
-     * Enales interrupts after execution
+     * Enables interrupts after execution
      */
     fun ei() {
         bus.executeFromCPU(BusConstants.ENABLE_INT, Bus.EMPTY_ARGUMENTS)
