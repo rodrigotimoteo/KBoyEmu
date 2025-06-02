@@ -73,14 +73,14 @@ class Load16Bit(
 
         val value = bus.getWord(programCounter + 1)
         val signedValue = if (value?.testBit(7) == true)
-            (value.getValue() and KBConstants.TWO_COMPLIMENT) - KBConstants.HIGHIEST_BIT else value?.getValue() ?: 0
+            (value.getValue() and KBConstants.TWO_COMPLIMENT) - KBConstants.HIGHEST_BIT else value?.getValue() ?: 0
 
         val finalAddress = (stackPointer + signedValue) and KBConstants.FILTER_4_BYTES
         val valueToAssign = bus.getValue(programCounter + 1)
 
         val halfCarry = ((stackPointer and KBConstants.FILTER_BYTE) + (valueToAssign and KBConstants.FILTER_BYTE)
                 and 0x10) == 0x10
-        val carry = (((stackPointer and KBConstants.FILTER_2BYTE_WORD) + valueToAssign) and 0x100) == 0x100
+        val carry = (((stackPointer and KBConstants.FILTER_2_BYTES) + valueToAssign) and 0x100) == 0x100
 
         flags.setFlags(zero = false, subtract = false, half = halfCarry, carry = carry)
 
@@ -89,14 +89,14 @@ class Load16Bit(
     }
 
     /**
-     * Put stack pointer at 16bit address immediately after the program counter
+     * Put the stack pointer at 16 bit address immediately after the program counter
      */
     fun ldNNSP() {
         repeat(2) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS) }
 
         val address = bus.calculateNN()
         val stackPointer = bus.getFromCPU(BusConstants.GET_SP, Bus.EMPTY_ARGUMENTS) as Int
-        bus.setValue(address, stackPointer and KBConstants.FILTER_2BYTE_WORD)
+        bus.setValue(address, stackPointer and KBConstants.FILTER_2_BYTES)
         bus.executeFromCPU(BusConstants.INCR_PC, 3)
     }
 
