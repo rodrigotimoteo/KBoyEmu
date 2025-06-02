@@ -60,7 +60,7 @@ class Decoder(
      *
      * @param operationCode to be executed
      */
-    public fun decode(operationCode: Int) {
+    fun decode(operationCode: Int) {
         bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
 
         if (!cbInstruction) {
@@ -71,6 +71,14 @@ class Decoder(
         }
     }
 
+    /**
+     * Handles the execution of a regular CPU opcode instruction.
+     *
+     * Dispatches the operation based on the provided opcode and calls the corresponding method
+     * to perform the instruction logic.
+     *
+     * @param operationCode The opcode integer representing the instruction to execute.
+     */
     @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun handleRegularOPs(operationCode: Int) {
         when (operationCode) {
@@ -81,7 +89,7 @@ class Decoder(
             0x02 ->  // LD (BC),A
                 load8Bit.ldTwoRegisters(BusConstants.GET_BC)
             0x03 ->  // INC BC
-                alu.incR(0)
+                alu.incR(BusConstants.GET_BC, BusConstants.SET_BC)
             0x04 ->  // INC B
                 alu.inc(RegisterNames.B)
             0x05 ->  // DEC B
@@ -93,11 +101,11 @@ class Decoder(
             0x08 ->  // LD (u16),SP
                 load16Bit.ldNNSP()
             0x09 ->  // ADD HL,BC
-                alu.addHL(0)
+                alu.addHL(BusConstants.GET_BC)
             0x0A ->  // LD A,(BC)
                 load8Bit.ldTwoRegistersIntoA(BusConstants.GET_BC)
             0x0B ->  // DEC BC
-                alu.decR(0)
+                alu.decR(BusConstants.GET_BC, BusConstants.SET_BC)
             0x0C ->  // INC C
                 alu.inc(RegisterNames.C)
             0x0D ->  // DEC C
@@ -113,7 +121,7 @@ class Decoder(
             0x12 ->  // LD (DE),A
                 load8Bit.ldTwoRegisters(BusConstants.GET_DE)
             0x13 ->  // INC DE
-                alu.incR(1)
+                alu.incR(BusConstants.GET_DE, BusConstants.SET_DE)
             0x14 ->  // INC D
                 alu.inc(RegisterNames.D)
             0x15 ->  // DEC D
@@ -125,11 +133,11 @@ class Decoder(
             0x18 ->  // JR i8
                 jump.jr()
             0x19 ->  // ADD HL,DE
-                alu.addHL(1)
+                alu.addHL(BusConstants.GET_DE)
             0x1A ->  // LD A,(DE)
                 load8Bit.ldTwoRegistersIntoA(BusConstants.GET_DE)
             0x1B ->  // DEC DE
-                alu.decR(1)
+                alu.decR(BusConstants.GET_DE, BusConstants.SET_DE)
             0x1C ->  // INC E
                 alu.inc(RegisterNames.E)
             0x1D ->  // DEC E
@@ -139,13 +147,13 @@ class Decoder(
             0x1F ->  // RRA
                 rotateShift.rra()
             0x20 ->  // JR NZ,i8
-                jump.jrCond("NZ")
+                jump.jrCond(JumpConstants.NZ)
             0x21 ->  // LD HL,u16
                 load16Bit.ld16bit(2)
             0x22 ->  // LDI (HL),A
                 load8Bit.ldi(true)
             0x23 ->  // INC HL
-                alu.incR(2)
+                alu.incR(BusConstants.GET_HL, BusConstants.SET_HL)
             0x24 ->  // INC H
                 alu.inc(RegisterNames.H)
             0x25 ->  // DEC H
@@ -155,13 +163,13 @@ class Decoder(
             0x27 ->  // DAA
                 alu.daa()
             0x28 ->  // JR Z,u8
-                jump.jrCond("Z")
+                jump.jrCond(JumpConstants.Z)
             0x29 ->  // ADD HL, HL
-                alu.addHL(2)
+                alu.addHL(BusConstants.GET_HL)
             0x2A ->  // LDI A,(HL)
                 load8Bit.ldi(false)
             0x2B ->  // DEC HL
-                alu.decR(2)
+                alu.decR(BusConstants.GET_HL, BusConstants.SET_HL)
             0x2C ->  // INC L
                 alu.inc(RegisterNames.L)
             0x2D ->  // DEC L
@@ -171,7 +179,7 @@ class Decoder(
             0x2F ->  // CPL
                 alu.cpl()
             0x30 ->  // JR NC,u8
-                jump.jrCond("NC")
+                jump.jrCond(JumpConstants.NC)
             0x31 ->  // LD SP,u16
                 load16Bit.ldSPUU()
             0x32 ->  // LDD (HL),A
@@ -187,7 +195,7 @@ class Decoder(
             0x37 ->  // SCF
                 control.scf()
             0x38 ->  // JR C,u8
-                jump.jrCond(RegisterNames.C)
+                jump.jrCond(JumpConstants.C)
             0x39 ->  // ADD HL,SP
                 alu.addHLSP()
             0x3A ->  // LDD A,(HL)
@@ -575,7 +583,14 @@ class Decoder(
         }
     }
 
-
+    /**
+     * Handles the execution of CB-prefixed CPU opcode instructions.
+     *
+     * These instructions mostly deal with bit manipulation operations such as rotates, shifts, bit tests, and resets.
+     * This method dispatches the given opcode to the corresponding rotate/shift or bit operation.
+     *
+     * @param operationCode The CB-prefixed opcode integer representing the instruction to execute.
+     */
     @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun handleCBOPs(operationCode: Int) {
         when (operationCode) {

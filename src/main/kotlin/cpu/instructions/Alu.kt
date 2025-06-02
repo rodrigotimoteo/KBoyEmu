@@ -442,7 +442,8 @@ class Alu(
     }
 
     /**
-     * Compares register A with the value at the given memory address by performing (value - A) without storing the result.
+     * Compares register A with the value at the given memory address by performing (value - A) without storing the
+     * result.
      *
      * Used for CP (A, HL) or CP (A, nn) depending on `useHL`.
      * Updates flags: Z (zero), N (subtract), H (half-carry), C (carry).
@@ -628,15 +629,16 @@ class Alu(
      *
      * Does not affect any flags.
      *
-     * @param register The 16-bit register pair to increment (e.g., BC, DE, HL, SP).
+     * @param registerIn The 16-bit register pair to increment (e.g., BC, DE, HL, SP).
+     * @param registerOut The 16-bit register pair where to store the incremented result
      */
-    fun incR(register: BusConstants) {
+    fun incR(registerIn: BusConstants, registerOut: BusConstants) {
         bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
 
-        val givenRegisterPair = bus.getFromCPU(register, Bus.EMPTY_ARGUMENTS) as Int
+        val givenRegisterPair = bus.getFromCPU(registerIn, Bus.EMPTY_ARGUMENTS) as Int
         val finalValue = (givenRegisterPair + 1) and KBConstants.FILTER_4_BYTES
 
-        bus.executeFromCPU(register, finalValue)
+        bus.executeFromCPU(registerOut, finalValue)
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -645,15 +647,16 @@ class Alu(
      *
      * Does not affect any flags.
      *
-     * @param register The 16-bit register pair to decrement (e.g., BC, DE, HL, SP).
+     * @param registerIn The 16-bit register pair to decrement (e.g., BC, DE, HL, SP).
+     * @param registerOut The 16-bit register pair where to store the incremented result
      */
-    fun decR(register: BusConstants) {
+    fun decR(registerIn: BusConstants, registerOut: BusConstants) {
         bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
 
-        val givenRegisterPair = bus.getFromCPU(register, Bus.EMPTY_ARGUMENTS) as Int
+        val givenRegisterPair = bus.getFromCPU(registerIn, Bus.EMPTY_ARGUMENTS) as Int
         val finalValue = (givenRegisterPair - 1) and KBConstants.FILTER_4_BYTES
 
-        bus.executeFromCPU(register, finalValue)
+        bus.executeFromCPU(registerOut, finalValue)
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
