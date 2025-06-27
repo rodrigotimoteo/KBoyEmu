@@ -21,3 +21,7 @@ tasks.test {
 kotlin {
     jvmToolchain(21)
 }
+
+if ("detekt" !in gradle.startParameter.taskNames) {
+    tasks.detekt { enabled = false }
+}
