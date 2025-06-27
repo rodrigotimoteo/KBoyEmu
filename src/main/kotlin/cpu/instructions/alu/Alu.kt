@@ -1,4 +1,4 @@
-package cpu.instructions
+package cpu.instructions.alu
 
 import cpu.Flags
 import cpu.registers.RegisterNames
@@ -14,14 +14,16 @@ import memory.Word
 @Suppress("MagicNumber", "TooManyFunctions")
 class Alu(
     private val bus: Bus
-) {
+) : ArithmeticOperations {
     /**
-     * Stores the flags object to be interacted with freely
+     * Stores the flags' object to be interacted with freely
      */
-    private val flags: Flags = bus.getFromCPU(BusConstants.GET_FLAGS, Bus.EMPTY_ARGUMENTS) as Flags
+    private val flags: Flags by lazy {
+        bus.getFromCPU(BusConstants.GET_FLAGS, Bus.Companion.EMPTY_ARGUMENTS) as Flags
+    }
 
     /**
-     * Checks whether the zero flag should be set or reset
+     * Checks whether the zero-flag should be set or reset
      *
      * @param value to check
      * @return status of zero flag
@@ -31,12 +33,12 @@ class Alu(
     }
 
     /**
-     * Checks if the half carry flag will be set or reset based on the values used in the additions.
+     * Checks if the half-carry flag is set or reset based on the values used in the additions.
      *
      * @param value1 first value used
      * @param value2 second value used
-     * @param carry this is either 1 if carry flag was set or 0 otherwise
-     * @return status of half carry flag
+     * @param carry this is either 1 if the carry flag was set or 0 otherwise
+     * @return status of the half-carry flag
      */
     private fun checkHalfCarryAdd(
         value1: Int,
@@ -47,22 +49,22 @@ class Alu(
     }
 
     /**
-     * Checks if the carry flag will be set or reset based on the values used in additions.
+     * Checks if the carry flag is set or reset based on the values used in additions.
      *
      * @param value to check
-     * @return status of carry flag
+     * @return status of the carry flag
      */
     private fun checkCarryAdd(value: Int): Boolean {
         return value > KBConstants.FILTER_2_BYTES
     }
 
     /**
-     * Checks if the half carry flag will be set or reset based on the values used in the subtractions.
+     * Checks if the half-carry flag is set or reset based on the values used in the subtractions.
      *
      * @param value1 first value used
      * @param value2 second value used
      * @param carry this is either 1 if a carry flag was set or 0 otherwise
-     * @return status of half carry flag
+     * @return status of the half-carry flag
      */
 
     private fun checkHalfCarrySub(
@@ -84,11 +86,37 @@ class Alu(
     }
 
     /**
+     * Retrieves the value of the specified CPU register.
+     *
+     * @param register The register from which the value needs to be fetched.
+     * @return The integer value stored in the specified register.
+     */
+    private fun getRegisterValue(register: RegisterNames): Int =
+        (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
+
+    /**
+     * Updates the value of register A in the system.
+     *
+     * @param value The new value to set for register A.
+     */
+    private fun updateRegisterA(value: Int) {
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, value))
+    }
+
+    /**
+     * Increments the program counter (PC) by a specified value using the bus execution mechanism.
+     *
+     * @param value The integer value by which the program counter (PC) will be incremented.
+     */
+    private fun incrementPC(value: Int) =
+        bus.executeFromCPU(BusConstants.INCR_PC, value)
+
+    /**
      * Performs the add operation from any given value stored in a register to register A
      *
      * @param register used to retrieve the value to add
      */
-    fun add(register: RegisterNames) {
+    override fun add(register: RegisterNames) {
         val valueInGivenRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val finalValue = valueInGivenRegister + valueInRegisterA
@@ -108,8 +136,8 @@ class Alu(
      * @param memoryAddress used to retrieve the value to add
      * @param useHL if should retrieve from HL register
      */
-    fun addSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+    override fun addSpecial(memoryAddress: Int, useHL: Boolean) {
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -120,7 +148,8 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
+        bus.executeFromCPU(
+            BusConstants.SET_REGISTER, arrayOf<Any>
 
 (RegisterNames.A, finalValue))
         if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, 1)
@@ -133,7 +162,7 @@ class Alu(
      *
      * @param register used to retrieve the register to add to register A's value
      */
-    fun adc(register: RegisterNames) {
+    override fun adc(register: RegisterNames) {
         val valueInGivenRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
@@ -145,9 +174,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -159,8 +186,8 @@ class Alu(
      * @param memoryAddress used to retrieve the value to add to register A's value
      * @param useHL      if HL is being used or not
      */
-    fun adcSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+    override fun adcSpecial(memoryAddress: Int, useHL: Boolean) {
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -174,7 +201,8 @@ class Alu(
 
         flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = carry)
 
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
+        bus.executeFromCPU(
+            BusConstants.SET_REGISTER, arrayOf<Any>
 
 (RegisterNames.A, finalValue))
         if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, 1)
@@ -186,7 +214,7 @@ class Alu(
      *
      * @param register which register to use
      */
-    fun sub(register: RegisterNames) {
+    override fun sub(register: RegisterNames) {
         val valueInGivenRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
@@ -197,7 +225,8 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = true, half = halfCarry, carry = carry)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
+        bus.executeFromCPU(
+            BusConstants.SET_REGISTER, arrayOf<Any>
 
 (RegisterNames.A, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
@@ -210,8 +239,8 @@ class Alu(
      * @param memoryAddress which memory address to use
      * @param useHL if HL is being used or not
      */
-    fun subSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+    override fun subSpecial(memoryAddress: Int, useHL: Boolean) {
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -223,7 +252,8 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = true, half = halfCarry, carry = carry)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
+        bus.executeFromCPU(
+            BusConstants.SET_REGISTER, arrayOf<Any>
 
 (RegisterNames.A, finalValue))
         if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, 1)
@@ -237,7 +267,7 @@ class Alu(
      *
      * @param register The register to subtract from A.
      */
-    fun sbc(register: RegisterNames) {
+    override fun sbc(register: RegisterNames) {
         val valueInGivenRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
@@ -249,7 +279,8 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = true, half = halfCarry, carry = carry)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
+        bus.executeFromCPU(
+            BusConstants.SET_REGISTER, arrayOf<Any>
 
 (RegisterNames.A, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
@@ -264,8 +295,8 @@ class Alu(
      * @param memoryAddress The memory address to read the value from.
      * @param useHL If true, increments PC by 1 (HL indirect); otherwise, by 2 (immediate address).
      */
-    fun sbcSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+    override fun sbcSpecial(memoryAddress: Int, useHL: Boolean) {
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -278,7 +309,8 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = true, half = halfCarry, carry = carry)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
+        bus.executeFromCPU(
+            BusConstants.SET_REGISTER, arrayOf<Any>
 
 (RegisterNames.A, finalValue))
         if (useHL)bus.executeFromCPU(BusConstants.INCR_PC, 1)
@@ -292,7 +324,7 @@ class Alu(
      *
      * @param register The register to AND with A.
      */
-    fun and(register: RegisterNames) {
+    override fun and(register: RegisterNames) {
         val valueInGivenRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
 
@@ -300,7 +332,8 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = true, carry = false)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
+        bus.executeFromCPU(
+            BusConstants.SET_REGISTER, arrayOf<Any>
 
 (RegisterNames.A, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
@@ -315,8 +348,8 @@ class Alu(
      * @param memoryAddress The address to read the value from.
      * @param useHL If true, increments PC by 1 (HL); otherwise by 2 (immediate address).
      */
-    fun andSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+    override fun andSpecial(memoryAddress: Int, useHL: Boolean) {
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -324,9 +357,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero,  subtract = false, half = true, carry = false)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, 1)
         else bus.executeFromCPU(BusConstants.INCR_PC, 2)
     }
@@ -338,16 +369,14 @@ class Alu(
      *
      * @param register The register to OR with A.
      */
-    fun or(register: RegisterNames) {
+    override fun or(register: RegisterNames) {
         val valueInGivenRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val finalValue = valueInRegisterA or valueInGivenRegister
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = false, carry = false)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -360,8 +389,8 @@ class Alu(
      * @param memoryAddress The memory address to read the value from.
      * @param useHL If true, increments PC by 1 (HL); otherwise by 2 (immediate address).
      */
-    fun orSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+    override fun orSpecial(memoryAddress: Int, useHL: Boolean) {
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -369,9 +398,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = false, carry = false)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         if (useHL)bus.executeFromCPU(BusConstants.INCR_PC, 1)
         else bus.executeFromCPU(BusConstants.INCR_PC, 2)
     }
@@ -390,9 +417,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = false, carry = false)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -406,7 +431,7 @@ class Alu(
      * @param useHL If true, increments PC by 1 (HL); otherwise by 2 (immediate address).
      */
     fun xorSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -414,9 +439,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = false, carry = false)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         if (useHL) bus.executeFromCPU(BusConstants.INCR_PC, 1)
         else bus.executeFromCPU(BusConstants.INCR_PC, 2)
     }
@@ -428,7 +451,7 @@ class Alu(
      *
      * @param register The register to compare with A.
      */
-    fun cp(register: RegisterNames) {
+    override fun cp(register: RegisterNames) {
         val valueInGivenRegister = (bus.getFromCPU(BusConstants.GET_REGISTER, register) as Word).getValue()
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val finalValue = valueInGivenRegister - valueInRegisterA
@@ -451,8 +474,8 @@ class Alu(
      * @param memoryAddress The memory address to read the value from.
      * @param useHL If true, increments PC by 1 (HL); otherwise by 2 (immediate address).
      */
-    fun cpSpecial(memoryAddress: Int, useHL: Boolean) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+    override fun cpSpecial(memoryAddress: Int, useHL: Boolean) {
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val valueInAddress = bus.getValue(memoryAddress)
@@ -482,9 +505,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = null)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(register, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(register, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -496,7 +517,7 @@ class Alu(
      * @param memoryAddress The memory address to increment.
      */
     fun incSpecial(memoryAddress: Int) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
         val valueInAddress = bus.getValue(memoryAddress)
         val finalValue = (valueInAddress + 1) and KBConstants.FILTER_2_BYTES
@@ -506,7 +527,7 @@ class Alu(
 
         flags.setFlags(zero = zero, subtract = false, half = halfCarry, carry = null)
         bus.setValue(memoryAddress, finalValue)
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -525,9 +546,7 @@ class Alu(
         val zero = checkZero(finalValue)
 
         flags.setFlags(zero = zero, subtract = true, half = halfCarry, carry = null)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(register, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(register, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -539,7 +558,7 @@ class Alu(
      * @param memoryAddress The memory address to decrement.
      */
     fun decSpecial(memoryAddress: Int) {
-        repeat(2) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS) }
+        repeat(2) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS) }
 
         val valueInAddress = bus.getValue(memoryAddress)
         val finalValue = valueInAddress - 1
@@ -560,10 +579,10 @@ class Alu(
      * @param register The register pair to add to HL (e.g., BC, DE, HL, SP).
      */
     fun addHL(register: BusConstants) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
-        val valueInHL = bus.getFromCPU(BusConstants.GET_HL, Bus.EMPTY_ARGUMENTS) as Int
-        val givenRegisterPair = bus.getFromCPU(register, Bus.EMPTY_ARGUMENTS) as Int
+        val valueInHL = bus.getFromCPU(BusConstants.GET_HL, Bus.Companion.EMPTY_ARGUMENTS) as Int
+        val givenRegisterPair = bus.getFromCPU(register, Bus.Companion.EMPTY_ARGUMENTS) as Int
 
         val halfCarry = ((valueInHL and KBConstants.FILTER_3_BYTES) +
                 (givenRegisterPair and KBConstants.FILTER_3_BYTES) and 0x1000) == 0x1000
@@ -583,10 +602,10 @@ class Alu(
      * Updates flags: N (reset), H (half-carry), C (carry). Zero flag is not affected.
      */
     fun addHLSP() {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
-        val valueInHL = bus.getFromCPU(BusConstants.GET_HL, Bus.EMPTY_ARGUMENTS) as Int
-        val stackPointer = bus.getFromCPU(BusConstants.GET_SP, Bus.EMPTY_ARGUMENTS) as Int
+        val valueInHL = bus.getFromCPU(BusConstants.GET_HL, Bus.Companion.EMPTY_ARGUMENTS) as Int
+        val stackPointer = bus.getFromCPU(BusConstants.GET_SP, Bus.Companion.EMPTY_ARGUMENTS) as Int
 
         val halfCarry = ((valueInHL and KBConstants.FILTER_3_BYTES) +
                 (stackPointer and KBConstants.FILTER_3_BYTES) and 0x1000) == 0x1000
@@ -608,9 +627,9 @@ class Alu(
      * @param memoryAddress The memory address of the signed 8-bit immediate value to add.
      */
     fun addSP(memoryAddress: Int) {
-        repeat(3) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS) }
+        repeat(3) { bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS) }
 
-        val stackPointer = bus.getFromCPU(BusConstants.GET_SP, Bus.EMPTY_ARGUMENTS) as Int
+        val stackPointer = bus.getFromCPU(BusConstants.GET_SP, Bus.Companion.EMPTY_ARGUMENTS) as Int
         val valueInAddress = bus.getValue(memoryAddress)
         val valueSigned = if ((valueInAddress and KBConstants.HIGHEST_BIT) shr 7 == 1) valueInAddress
                 else (valueInAddress and KBConstants.TWO_COMPLIMENT) - KBConstants.HIGHEST_BIT
@@ -633,9 +652,9 @@ class Alu(
      * @param registerOut The 16-bit register pair where to store the incremented result
      */
     fun incR(registerIn: BusConstants, registerOut: BusConstants) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
-        val givenRegisterPair = bus.getFromCPU(registerIn, Bus.EMPTY_ARGUMENTS) as Int
+        val givenRegisterPair = bus.getFromCPU(registerIn, Bus.Companion.EMPTY_ARGUMENTS) as Int
         val finalValue = (givenRegisterPair + 1) and KBConstants.FILTER_4_BYTES
 
         bus.executeFromCPU(registerOut, finalValue)
@@ -651,9 +670,9 @@ class Alu(
      * @param registerOut The 16-bit register pair where to store the incremented result
      */
     fun decR(registerIn: BusConstants, registerOut: BusConstants) {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
 
-        val givenRegisterPair = bus.getFromCPU(registerIn, Bus.EMPTY_ARGUMENTS) as Int
+        val givenRegisterPair = bus.getFromCPU(registerIn, Bus.Companion.EMPTY_ARGUMENTS) as Int
         val finalValue = (givenRegisterPair - 1) and KBConstants.FILTER_4_BYTES
 
         bus.executeFromCPU(registerOut, finalValue)
@@ -666,7 +685,7 @@ class Alu(
      * Does not affect any flags.
      */
     fun incSP() {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
         bus.executeFromCPU(BusConstants.INCR_SP, 1)
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
@@ -677,7 +696,7 @@ class Alu(
      * Does not affect any flags.
      */
     fun decSP() {
-        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.EMPTY_ARGUMENTS)
+        bus.executeFromCPU(BusConstants.TICK_TIMERS, Bus.Companion.EMPTY_ARGUMENTS)
         bus.executeFromCPU(BusConstants.INCR_SP, -1)
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
@@ -705,9 +724,7 @@ class Alu(
         val zero = checkZero(finalValue and KBConstants.FILTER_2_BYTES)
 
         flags.setFlags(zero = zero, subtract = null, half = false, carry)
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
 
@@ -720,9 +737,7 @@ class Alu(
         val valueInRegisterA = (bus.getFromCPU(BusConstants.GET_REGISTER, RegisterNames.A) as Word).getValue()
         val finalValue = (valueInRegisterA.inv() and KBConstants.FILTER_2_BYTES)
 
-        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>
-
-(RegisterNames.A, finalValue))
+        bus.executeFromCPU(BusConstants.SET_REGISTER, arrayOf<Any>(RegisterNames.A, finalValue))
         flags.setFlags(zero = null, subtract = true, half = true, carry = null)
         bus.executeFromCPU(BusConstants.INCR_PC, 1)
     }
