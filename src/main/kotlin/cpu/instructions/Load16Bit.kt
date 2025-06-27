@@ -17,7 +17,9 @@ class Load16Bit(
     /**
      * Stores the flags object to be interacted with freely
      */
-    private val flags: Flags = bus.getFromCPU(BusConstants.GET_FLAGS, Bus.EMPTY_ARGUMENTS) as Flags
+    private val flags: Flags by lazy {
+        bus.getFromCPU(BusConstants.GET_FLAGS, Bus.Companion.EMPTY_ARGUMENTS) as Flags
+    }
 
     /**
      * Loads a 16bit immediate value after the program counter onto a register set, BC, DE or HL, which is used is

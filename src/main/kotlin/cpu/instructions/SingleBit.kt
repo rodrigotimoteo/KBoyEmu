@@ -17,7 +17,9 @@ class SingleBit(
     /**
      * Stores the flags object to be interacted with freely
      */
-    private val flags: Flags = bus.getFromCPU(BusConstants.GET_FLAGS, Bus.EMPTY_ARGUMENTS) as Flags
+    private val flags: Flags by lazy {
+        bus.getFromCPU(BusConstants.GET_FLAGS, Bus.Companion.EMPTY_ARGUMENTS) as Flags
+    }
 
     /**
      * Test given bit of a specific register given

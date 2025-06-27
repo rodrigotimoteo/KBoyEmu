@@ -4,11 +4,10 @@ import KBConstants.CARRY_BIT
 import KBConstants.HALF_CARRY_BIT
 import KBConstants.SUBTRACT_BIT
 import KBConstants.ZERO_BIT
-import memory.Bus
 import memory.Word
 
 /**
- * This class is abstraction of the Flags used by the CPU to check for special
+ * This class is an abstraction of the Flags used by the CPU to check for special
  * operations such as checking if output is Zero, checking the Carry and Half
  * Carry as well as the Subtract flag if a subtraction is performed
  *

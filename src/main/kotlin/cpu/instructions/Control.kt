@@ -14,7 +14,9 @@ class Control(
     /**
      * Stores the flags object to be interacted with freely
      */
-    private val flags: Flags = bus.getFromCPU(BusConstants.GET_FLAGS, Bus.EMPTY_ARGUMENTS) as Flags
+    private val flags: Flags by lazy {
+        bus.getFromCPU(BusConstants.GET_FLAGS, Bus.Companion.EMPTY_ARGUMENTS) as Flags
+    }
 
     /**
      * Executes something design to do nothing (quite fun actually)

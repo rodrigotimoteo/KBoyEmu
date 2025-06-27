@@ -7,7 +7,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
- * This class is the main vehicle for inter component comunication. It is where PPU/Memory/CPU interact
+ * This class is the main vehicle for inter-component communication. It is where PPU/Memory/CPU interact
  *
  * @author rodrigotimoteo
  **/
@@ -26,12 +26,21 @@ class Bus(
 
     //TODO LACKS CONTROLLER
 
+    fun start() {
+        while (true) {
+            val cycles = cpu.timers.getMachineCycles()
+            cpu.tick()
+            println(cycles)
+            println(cpu.registers)
+        }
+    }
+
     fun isCGB(): Boolean {
         return isCGB
     }
 
     /**
-     * Changes value of specific word based on its memory address
+     * Changes value of a specific word based on its memory address
      *
      * @param memoryAddress where to change the value
      * @param value to assign
@@ -41,10 +50,10 @@ class Bus(
     }
 
     /**
-     * Gets the value of specific word based on its address
+     * Gets the value of a specific word based on its address
      *
      * @param memoryAddress where to get the value
-     * @return value stored in specific address
+     * @return value stored in a specific address
      */
     fun getValue(memoryAddress: Int): Int {
         return memoryManager.getValue(memoryAddress)
@@ -55,7 +64,7 @@ class Bus(
      * be access and therefore return null)
      *
      * @param memoryAddress where to get the value
-     * @return object contained in specific address
+     * @return object contained in a specific address
      */
     fun getWord(memoryAddress: Int): Word? {
         return memoryManager.getWord(memoryAddress)
@@ -75,7 +84,7 @@ class Bus(
     }
 
     /**
-     * Executes an action on the CPU of the Game Boy based on predifined options
+     * Executes an action on the CPU of the Game Boy based on predefined options
      *
      * @param action which action to perform
      * @param parameters to use
@@ -106,7 +115,7 @@ class Bus(
     }
 
     /**
-     * Gets values from the CPU from any part of the architecure
+     * Gets values from the CPU from any part of the architecture
      *
      * @param action which value to get
      * @param parameters to use
@@ -130,7 +139,7 @@ class Bus(
     }
 
     /**
-     * Calculates a new memory address to fetch memory for specific instructions uses a 16 bit word produced by the sum
+     * Calculates a new memory address to fetch memory for specific instructions uses a 16-bit word produced by the sum
      * of lower nibble of PC + 1 and higher nibble of PC + 2
      *
      * @return calculated address

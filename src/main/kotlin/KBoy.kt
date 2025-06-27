@@ -1,3 +1,5 @@
+import cpu.CPU
+import memory.Bus
 import memory.cartridge.RomReader
 import java.io.File
 
@@ -13,8 +15,6 @@ class KBoy : Thread() {
     init {
         loadRom(romName)
 
-
-
     }
 
     private fun loadRom(romName: String) {
@@ -27,5 +27,8 @@ class KBoy : Thread() {
 
     override fun run() {
         super.run()
+
+        val bus = Bus(romReader.isCgb(), romReader.getRomModule())
+        bus.start()
     }
 }

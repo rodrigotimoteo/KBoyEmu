@@ -18,7 +18,9 @@ class RotateShift(
     /**
      * Stores the flags object to be interacted with freely
      */
-    private val flags: Flags = bus.getFromCPU(BusConstants.GET_FLAGS, Bus.EMPTY_ARGUMENTS) as Flags
+    private val flags: Flags by lazy {
+        bus.getFromCPU(BusConstants.GET_FLAGS, Bus.Companion.EMPTY_ARGUMENTS) as Flags
+    }
 
     /**
      * Rotates A to the left and the 8th bit is used to set/reset the carry flag

@@ -38,7 +38,7 @@ class Timers {
     /**
      * Advances the timers by one unit
      */
-    public fun tick() {
+    fun tick() {
         machineCycles++
 
         tickDividerTimer()

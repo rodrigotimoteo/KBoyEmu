@@ -1,5 +1,6 @@
 package cpu.instructions
 
+import cpu.instructions.alu.Alu
 import cpu.registers.RegisterNames
 import memory.Bus
 import memory.BusConstants
@@ -272,7 +273,7 @@ class Decoder(
                 load8Bit.ld(RegisterNames.E, RegisterNames.L)
             0x5E ->  // LD E,(HL)
                 load8Bit.ldHLtoRegister(RegisterNames.E)
-            0x5F ->  // LD E,A
+            0x5F ->  // LD E, A
                 load8Bit.ld(RegisterNames.E, RegisterNames.A)
             0x60 ->  // LD H,B
                 load8Bit.ld(RegisterNames.H, RegisterNames.B)
@@ -328,7 +329,7 @@ class Decoder(
                 load8Bit.ld(RegisterNames.A, RegisterNames.C)
             0x7A ->  // LD A,D
                 load8Bit.ld(RegisterNames.A, RegisterNames.D)
-            0x7B ->  // LD A,E
+            0x7B ->  // LD A, E
                 load8Bit.ld(RegisterNames.A, RegisterNames.E)
             0x7C ->  // LD A,H
                 load8Bit.ld(RegisterNames.A, RegisterNames.H)
@@ -400,7 +401,7 @@ class Decoder(
                 alu.sbc(RegisterNames.L)
             0x9E ->  // SBC A, (HL)
                 alu.sbcSpecial(bus.getFromCPU(BusConstants.GET_HL, Bus.EMPTY_ARGUMENTS) as Int, true)
-            0x9F ->  // SBC A,A
+            0x9F ->  // SBC A, A
                 alu.sbc(RegisterNames.A)
             0xA0 ->  // AND A,B
                 alu.and(RegisterNames.B)
@@ -454,7 +455,7 @@ class Decoder(
                 alu.cp(RegisterNames.B)
             0xB9 ->  // CP A,C
                 alu.cp(RegisterNames.C)
-            0xBA ->  // CP A,D
+            0xBA ->  // CP A, D
                 alu.cp(RegisterNames.D)
             0xBB ->  // CP A,E
                 alu.cp(RegisterNames.E)
@@ -491,7 +492,7 @@ class Decoder(
                 jump.jpCond(JumpConstants.Z)
             0xCB -> {
                 cbInstruction = true
-                bus.executeFromCPU(BusConstants.INCR_PC, arrayOf<String>("1"))
+                bus.executeFromCPU(BusConstants.INCR_PC, 1)
                 decode(bus.getValue((bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int)))
             }
             0xCC ->  // CALL Z,nn
@@ -524,7 +525,7 @@ class Decoder(
                 jump.jpCond(JumpConstants.C)
             0xDC ->  // CALL C,nn
                 jump.callCond(JumpConstants.C)
-            0xDE ->  // SBC A,#
+            0xDE ->  // SBC A, #
                 alu.sbcSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xDF ->  // RST 18H
                 jump.rst(0x18)
@@ -550,7 +551,7 @@ class Decoder(
                 alu.xorSpecial(bus.getFromCPU(BusConstants.GET_PC, Bus.EMPTY_ARGUMENTS) as Int + 1, false)
             0xEF ->  // RST 28H
                 jump.rst(0x28)
-            0xF0 ->  // LD A,(FF00+u8)
+            0xF0 ->  // LD A, (FF00+u8)
                 load8Bit.ldh(false)
             0xF1 ->  // POP AF
                 load16Bit.pop(0)
@@ -586,8 +587,8 @@ class Decoder(
     /**
      * Handles the execution of CB-prefixed CPU opcode instructions.
      *
-     * These instructions mostly deal with bit manipulation operations such as rotates, shifts, bit tests, and resets.
-     * This method dispatches the given opcode to the corresponding rotate/shift or bit operation.
+     * These instructions mostly deal with bit manipulation operations such as "rotates", shifts, bit tests, and resets.
+     * This method dispatches the given opcode to the corresponding "rotate"/shift or "bit" operation.
      *
      * @param operationCode The CB-prefixed opcode integer representing the instruction to execute.
      */

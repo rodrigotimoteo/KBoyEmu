@@ -12,4 +12,5 @@ fun main() {
     }
 
     val kBoy = KBoy()
+    kBoy.start()
 }

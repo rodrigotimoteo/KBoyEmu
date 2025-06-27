@@ -10,6 +10,7 @@ import KBConstants.HL_INITIAL_VALUE
 import KBConstants.PROGRAM_COUNTER_INITIAL_VALUE
 import KBConstants.STACK_POINTER_INITIAL_VALUE
 import cpu.Flags
+import extensions.formatWord
 import memory.Bus
 import memory.Word
 import java.util.*
@@ -26,12 +27,16 @@ class Registers(
     /**
      * Stores all the registers with their associated name (register names kept as enum due to their limited nature)
      */
-    private val registersMap: EnumMap<RegisterNames, Word> = EnumMap(RegisterNames::class.java)
+    private val registersMap: HashMap<RegisterNames, Word> = HashMap<RegisterNames, Word>().apply {
+        for (name in RegisterNames.entries) {
+            this[name] = Word()
+        }
+    }
 
     /**
      * Stores the CPU flags hold by register F
      */
-    internal val flags: Flags = Flags(getRegister(RegisterNames.F))
+    internal val flags: Flags by lazy { Flags(getRegister(RegisterNames.F)) }
 
     /**
      * Stores the PC (default value at the end of boot rom is 0x0100)
@@ -106,10 +111,10 @@ class Registers(
     }
 
     /**
-     * Register getter based on given name (uses !! due to there not existing a possibility where a register is null)
+     * Register getter based on a given name (uses !! due to there not existing a possibility where a register is null)
      *
      * @param register name
-     * @return content of given register
+     * @return content of a given register
      */
     fun getRegister(register: RegisterNames): Word = registersMap[register]!!
 
@@ -208,9 +213,9 @@ class Registers(
     override fun toString(): String {
         val stringBuilder = StringBuilder();
 
-        registersMap.forEach {
-            stringBuilder.append(it.key).append(": ")
-                .append(String.format("%02X", getRegister(it.key).getValue()))
+        registersMap.keys.sortedBy { it.name }.forEach {
+            stringBuilder.append(it).append(": ")
+                .append(getRegister(it).getValue().formatWord())
                 .append(" ");
         }
 
@@ -219,10 +224,10 @@ class Registers(
         stringBuilder.append("PC: 00:").
         append(String.format("%04X", programCounter)).append(" ");
 
-        stringBuilder.append("(").append(String.format("%02X", bus.getValue(programCounter)));
-        stringBuilder.append(" ").append(String.format("%02X", bus.getValue(programCounter + 1)));
-        stringBuilder.append(" ").append(String.format("%02X", bus.getValue(programCounter + 2)));
-        stringBuilder.append(" ").append(String.format("%02X", bus.getValue(programCounter + 3)));
+        stringBuilder.append("(").append(bus.getValue(programCounter).formatWord());
+        stringBuilder.append(" ").append(bus.getValue(programCounter + 1).formatWord());
+        stringBuilder.append(" ").append(bus.getValue(programCounter + 2).formatWord());
+        stringBuilder.append(" ").append(bus.getValue(programCounter + 3).formatWord());
         stringBuilder.append(")");
 
         return stringBuilder.toString();

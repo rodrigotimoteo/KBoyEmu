@@ -13,14 +13,29 @@ import memory.Bus
 class CPU(
     private val bus: Bus
 ) {
+    /**
+     * Stores the CPU registers
+     */
     internal val registers: Registers = Registers(bus)
 
+    /**
+     * Stores the CPU timers
+     */
     internal val timers: Timers = Timers()
 
+    /**
+     * Stores the CPU interrupts
+     */
     internal val interrupts: Interrupts = Interrupts(bus)
 
+    /**
+     *
+     */
     private val decoder: Decoder = Decoder(bus)
 
+    /**
+     * Stores whether the cartridge is CGB and if the emulator should adapt for CGB mode
+     */
     private val isCgb = bus.isCGB()
 
     /**
@@ -33,7 +48,7 @@ class CPU(
      */
     private var isStopped = false
 
-    public fun tick() {
+    fun tick() {
         if (!isStopped) {
             if (!isHalted) {
                 fetchOperation()
