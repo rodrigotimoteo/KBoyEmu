@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.23"
-    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.ktlint)
 }
 
@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(libs.koin.core)
 }
 
 tasks.test {
@@ -20,7 +21,4 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(21)
-}
-
-ktlint {
 }

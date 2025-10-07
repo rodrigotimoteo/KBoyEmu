@@ -1,6 +1,12 @@
+import org.koin.core.context.startKoin
+
 /**
-@author rodrigotimoteo
+ * Main app entry point
+ * @author rodrigotimoteo
  **/
 fun main() {
-    println("Hello World!")
+    startKoin {
+        modules(appModule)
+    }
+
 }
