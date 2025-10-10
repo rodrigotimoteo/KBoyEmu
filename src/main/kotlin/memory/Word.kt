@@ -19,6 +19,15 @@ data class Word(
     }
 
     /**
+     * Sets the value of a given [Word]
+     *
+     * @param newValue to assign to this [Word]
+     */
+    internal fun setValue(newValue: UByte) {
+        value = newValue
+    }
+
+    /**
      * Gets the value contained inside this [Word]
      *
      * @return the value inside [Word]
@@ -30,7 +39,6 @@ data class Word(
      *
      * @param bit position to set
      */
-    @Suppress("MagicNumber") // Words have 8 bits always
     override fun setBit(bit: Int) {
         require(bit in 0..7) { BIT_ASSERTION_ERROR_MESSAGE }
 
@@ -42,7 +50,6 @@ data class Word(
      *
      * @param bit position to reset
      */
-    @Suppress("MagicNumber") // Words have 8 bits always
     override fun resetBit(bit: Int) {
         require(bit in 0..7) { BIT_ASSERTION_ERROR_MESSAGE }
 
@@ -54,7 +61,6 @@ data class Word(
      *
      * @param bit position to test
      */
-    @Suppress("MagicNumber") // Words have 8 bits always
     override fun testBit(bit: Int): Boolean {
         require(bit in 0..7) { BIT_ASSERTION_ERROR_MESSAGE }
 

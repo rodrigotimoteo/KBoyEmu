@@ -21,6 +21,11 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
+}
+
+detekt {
+    config.setFrom(files("$rootDir/detekt.yml"))
 }

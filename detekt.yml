@@ -2,3 +2,7 @@ config:
   validation: true
   warningsAsErrors: true
   excludes: '.*\.kts'
+
+style:
+  MagicNumber:
+    active: false
