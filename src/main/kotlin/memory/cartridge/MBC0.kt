@@ -5,6 +5,7 @@ import memory.MemoryModule
 /**
  * Represents the MBC0 (Memory Bank Controller) one of many types of controllers used by the Game Boy
  * This controller normally has 32Kib of ROM and if (most of the time it doesn't) RAM exists 8Kib
+ *
  * @author rodrigotimoteo
  **/
 class MBC0(
@@ -17,8 +18,7 @@ class MBC0(
     simultaneousActiveBanks = 2,
     memoryOffset = 0x0,
     numberOfBanks = romBanks
-),
-    RomModule {
+), RomModule {
     private val numberOfRamBanks: Int = ramBanks
 
     override fun getRamStatus(): Boolean {

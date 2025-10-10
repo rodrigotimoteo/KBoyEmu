@@ -52,7 +52,7 @@ class RomReader {
         try {
             romContent = Files.readAllBytes(romFile.toPath()).toUByteArray().toTypedArray()
         } catch (exception: IOException) {
-            println("Error reading ROM")
+            throw IOException(RomReader.LOAD_ROM_IO_EXCEPTION, exception)
         }
     }
 
@@ -91,5 +91,9 @@ class RomReader {
         val ramSize = romContent[ReservedAddresses.RAM_SIZE.memoryAddress].toInt()
 
         return ramBanksMap[ramSize] ?: 0
+    }
+
+    companion object {
+        const val LOAD_ROM_IO_EXCEPTION = "Loading the ROM has failed"
     }
 }
