@@ -13,6 +13,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation(libs.junit.jupiter)
+    
     implementation(libs.koin.core)
 }
 
